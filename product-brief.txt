@@ -1,0 +1,160 @@
+PromptTestLab is a web-based application designed to streamline the testing and evaluation of AI system prompts. It allows users to input a system prompt, automatically generate plausible user messages based on that prompt, and test AI model responses at scale. Users can compare how different models respond to the same input and analyze the effectiveness of their prompts across various contexts. This tool supports experimentation, optimization, and benchmarking of AI behavior in a controlled and repeatable environment.
+
+Screens needed:
+
+1. Authentication Screen (Login / Sign Up)
+Purpose
+Allow users to create an account or log in to access saved prompts and test results.
+
+UI Components
+Logo & App Name – Top center, small branding
+
+Tabs or Toggle Buttons – “Login” and “Sign Up”
+
+Text Inputs
+
+Email
+
+Password (and Confirm Password for sign up)
+
+Buttons
+
+Submit (Login/Sign Up)
+
+"Continue with Google" / "Continue with GitHub" (if OAuth is supported)
+
+Forgot Password – Link to reset
+
+Terms and Privacy – Small text footer
+
+Optional Enhancements
+Real-time validation (e.g., password strength)
+
+Animated transition between login/signup modes
+
+🧠 2. System Prompt Editor Screen
+Purpose
+Create or edit a system prompt to be used in testing.
+
+UI Components
+Header: “Create System Prompt” or “Edit Prompt”
+
+Text Input (Multiline Textarea)
+
+Label: System Prompt
+
+Placeholder: “e.g. You are a helpful assistant that summarizes legal documents…”
+
+Tags Input (Chips or Pills style) – For categorization
+
+Dropdown or Toggle
+
+Model Selector (default is none or GPT-4)
+
+Optional: Save as Template?
+
+Save Button – Bottom CTA
+
+Cancel / Back Button
+
+Extras
+Live word count / token estimate under the prompt
+
+Scrollable area for prompt input with autosave
+
+🔄 3. User Message Generation Screen
+Purpose
+Generate plausible user questions/messages from the system prompt using AI.
+
+UI Components
+Prompt Summary Box – At the top; collapsible
+
+Numeric Input + Generate Button
+
+Label: “How many messages to generate?” [Input + Button]
+
+Generated Messages List
+
+Cards or List Items with:
+
+User Message Text
+
+"Edit" and "Delete" buttons
+
+Checkbox to include/exclude from test run
+
+Optional: “Regenerate” icon per message
+
+Button
+
+“Select All / Deselect All”
+
+“Run Test with X Selected Messages”
+
+Back to Prompt Button
+
+Enhancements
+Swipe actions on messages (delete/edit)
+
+Pull to refresh for regeneration
+
+🧪 4. Test Results Screen
+Purpose
+View AI model responses to each user message given the system prompt.
+
+UI Components
+Tabs or Segmented Control: Per model (OpenAI, Anthropic, Google)
+
+Prompt Summary Header – Sticky, collapsible
+
+User Message Sections
+
+For each message:
+
+User Message Text (highlighted)
+
+AI Model Name + Timestamp
+
+AI Response Block (collapsible if long)
+
+“Regenerate with Different Model” Button
+
+Rate Response (👍 👎 or 1-5 stars)
+
+Optional: Notes or Comment Box
+
+Filters & Sorts
+
+By model, rating, user message, time
+
+Export Button (Top Right) – Options for JSON/CSV
+
+Extras
+Diff viewer toggle (compare across models)
+
+Colored model tags (OpenAI = blue, Anthropic = green, Google = red)
+
+⚙️ 5. Profile / Settings Screen
+Purpose
+Manage account settings, models, API keys, and authentication/logout.
+
+UI Components
+User Info
+
+Email, Username
+
+Connected Models & API Keys
+
+List of connected providers (OpenAI, Anthropic, Google)
+
+“Add / Edit API Key” option
+
+Plan Info / Usage (Optional)
+
+Tokens used / API call counts
+
+Theme Toggle – Dark / Light
+
+Log Out Button
+
+Version Info + Feedback Link

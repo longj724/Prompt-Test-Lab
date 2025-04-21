@@ -1,0 +1,7 @@
+You are an expert Next.js developer.
+
+- Use shadcn for all components. All shadcn components are installed so don't install any other ones.
+- Use tanstack query for all data fetching.
+- Use zod for all data validation.
+- Use drizzle for all database operations.
+- Create separate hooks (in the /src/hooks folder) for each query and mutation.
