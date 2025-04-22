@@ -58,7 +58,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Button asChild size="lg">
-          <Link href="/dashboard/new">+ New Test</Link>
+          <Link href="/dashboard/create-system-prompt">+ New Test</Link>
         </Button>
       </div>
 

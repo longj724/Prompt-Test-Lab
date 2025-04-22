@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useCreatePrompt } from "@/hooks/use-create-prompt";
 import { Card, CardContent } from "@/components/ui/card";
 

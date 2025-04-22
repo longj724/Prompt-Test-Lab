@@ -12,8 +12,16 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
-import { Pencil, Trash2, X, Check } from "lucide-react";
+import { Pencil, Trash2, X, Check, Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { type Message, generateMessagesSchema } from "@/lib/schema";
 import { useGenerateMessages } from "@/hooks/useGenerateMessages";
 import { type z } from "zod";
@@ -32,6 +40,8 @@ type FormData = z.infer<typeof formSchema>;
 export default function GenerateMessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newMessageContent, setNewMessageContent] = useState("");
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,7 +57,7 @@ export default function GenerateMessagesPage() {
         count: data.count,
         systemPrompt: LEGAL_DOCUMENT_SUMMARIZER_PROMPT,
       });
-      setMessages(generatedMessages);
+      setMessages((prev) => [...prev, ...generatedMessages]);
       toast.success(`Generated ${generatedMessages.length} messages`);
     } catch (_) {
       toast.error(`Failed to generate messages`);
@@ -69,55 +79,137 @@ export default function GenerateMessagesPage() {
     toast.success("Message updated");
   };
 
+  const handleCreateMessage = () => {
+    if (!newMessageContent.trim()) {
+      toast.error("Message content cannot be empty");
+      return;
+    }
+
+    const newMessage: Message = {
+      id: crypto.randomUUID(),
+      content: newMessageContent.trim(),
+      createdAt: new Date(),
+      included: true,
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+    setNewMessageContent("");
+    setIsCreateDialogOpen(false);
+    toast.success("Message created");
+  };
+
   return (
     <div className="container mx-auto py-8">
-      <h1 className="mb-6 text-3xl font-bold">Generate User Messages</h1>
+      <div className="mb-8">
+        <h1 className="mb-4 text-2xl font-semibold">
+          Legal Document Summarizer
+        </h1>
+        <Card>
+          <CardContent className="p-6">
+            <p className="text-muted-foreground whitespace-pre-wrap">
+              {LEGAL_DOCUMENT_SUMMARIZER_PROMPT}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <h2 className="mb-2 text-xl font-semibold">System Prompt</h2>
-          <p className="text-muted-foreground whitespace-pre-wrap">
-            {LEGAL_DOCUMENT_SUMMARIZER_PROMPT}
-          </p>
-        </CardContent>
-      </Card>
+      <div className="mb-8">
+        <h2 className="mb-2 text-xl font-semibold">Generate User Messages</h2>
+        <p className="text-muted-foreground mb-6">
+          Generated messages are potential user queries that might be asked
+          given your system prompt.
+        </p>
 
-      {/* Message Generation Controls */}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mb-8">
-          <div className="flex items-center gap-4">
-            <FormField
-              control={form.control}
-              name="count"
-              render={({ field }) => (
-                <FormItem className="max-w-xs flex-1">
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="How many messages?"
-                      min={1}
-                      max={10}
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex items-center gap-4"
+          >
+            <div className="flex items-center gap-4">
+              <FormLabel className="text-sm font-medium whitespace-nowrap">
+                How many messages?
+              </FormLabel>
+              <FormField
+                control={form.control}
+                name="count"
+                render={({ field }) => (
+                  <FormItem className="w-20">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={10}
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <Button
               type="submit"
               disabled={generateMutation.isPending}
               className="hover:cursor-pointer"
+              variant="default"
             >
               {generateMutation.isPending ? "Generating..." : "Generate"}
             </Button>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
 
-      {/* Generated Messages List */}
       <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">
+            Generated Messages ({messages.length})
+          </h3>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="hover:cursor-pointer"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Manual
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Message</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Textarea
+                  placeholder="Enter your message content..."
+                  value={newMessageContent}
+                  onChange={(e) => setNewMessageContent(e.target.value)}
+                  className="min-h-[150px]"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsCreateDialogOpen(false)}
+                    className="hover:cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleCreateMessage}
+                    className="hover:cursor-pointer"
+                  >
+                    Create
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         {generateMutation.isPending ? (
           <Card>
             <CardContent className="p-4">
@@ -156,6 +248,7 @@ export default function GenerateMessagesPage() {
                                 handleEdit(message.id, textarea.value);
                               }
                             }}
+                            className="hover:cursor-pointer"
                           >
                             <Check className="mr-1 h-4 w-4" />
                             Save
@@ -164,6 +257,7 @@ export default function GenerateMessagesPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => setEditingId(null)}
+                            className="hover:cursor-pointer"
                           >
                             <X className="mr-1 h-4 w-4" />
                             Cancel
@@ -180,7 +274,7 @@ export default function GenerateMessagesPage() {
                         size="icon"
                         variant="ghost"
                         onClick={() => setEditingId(message.id)}
-                        className="hover:cursor-pointer"
+                        className="h-8 w-8 hover:cursor-pointer"
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -188,7 +282,7 @@ export default function GenerateMessagesPage() {
                         size="icon"
                         variant="ghost"
                         onClick={() => handleDelete(message.id)}
-                        className="hover:cursor-pointer"
+                        className="h-8 w-8 hover:cursor-pointer"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
