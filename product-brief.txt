@@ -45,9 +45,10 @@ List of prompts with:
 - Number of messages
 - System Prompt
 
-3. System Prompt Editor Screen
+3. New Test Screen
 Purpose
 Create or edit a system prompt to be used in testing.
+Generate plausible user questions/messages from the system prompt using AI.
 
 UI Components
 Header: “Create System Prompt” or “Edit Prompt”
@@ -74,10 +75,6 @@ Extras
 Live word count / token estimate under the prompt
 
 Scrollable area for prompt input with autosave
-
-🔄 3. User Message Generation Screen
-Purpose
-Generate plausible user questions/messages from the system prompt using AI.
 
 UI Components
 Prompt Summary Box – At the top; collapsible

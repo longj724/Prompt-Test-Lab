@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import {
   Sidebar,
@@ -17,7 +17,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider defaultOpen>
-      <div className="flex h-screen">
+      <div className="flex h-screen w-full">
         <Sidebar collapsible="icon">
           <SidebarHeader className="flex items-center gap-2">
             <span className="font-semibold">Prompt Test Lab</span>
@@ -32,21 +32,12 @@ export default function DashboardLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Test Results">
-                  <Link
-                    href="/test-results"
-                    className="flex items-center gap-2"
-                  >
-                    <FileText className="h-4 w-4" />
-                    <span>Test Results</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <div className="flex w-full justify-center overflow-auto p-6">
+          {children}
+        </div>
       </div>
     </SidebarProvider>
   );

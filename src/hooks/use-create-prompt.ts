@@ -61,7 +61,11 @@ export function useCreatePrompt() {
       console.log("Saving prompt:", formData);
 
       if (action === "continue") {
-        router.push(`/dashboard/generate-messages?promptId=${123}`); // Replace with actual promptId
+        const searchParams = new URLSearchParams({
+          name: formData.name,
+          systemPrompt: formData.systemPrompt,
+        });
+        router.push(`/dashboard/generate-messages?${searchParams.toString()}`);
       } else {
         router.push("/dashboard");
       }
