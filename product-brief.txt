@@ -32,7 +32,20 @@ Real-time validation (e.g., password strength)
 
 Animated transition between login/signup modes
 
-🧠 2. System Prompt Editor Screen
+2. Dashboard Screen
+Purpose
+View a list of all tests created by the user.
+There should be a filter to search through the tests.
+There should be pagination so we can have multiple tests per page.
+
+UI Components
+List of prompts with:
+- Test Name
+- Create Date
+- Number of messages
+- System Prompt
+
+3. System Prompt Editor Screen
 Purpose
 Create or edit a system prompt to be used in testing.
 

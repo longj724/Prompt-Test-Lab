@@ -5,3 +5,6 @@ You are an expert Next.js developer.
 - Use zod for all data validation.
 - Use drizzle for all database operations.
 - Create separate hooks (in the /src/hooks folder) for each query and mutation.
+- Use the vercel ai sdk for all AI operations.
+- Use zod for schema validation for all api endpoints.
+- When you are creating a button make sure the cursor is a pointer when hovering over it.
