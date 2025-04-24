@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import {
   generateMessagesSchema,
   generateApiResponseSchema,
-} from "@/lib/schema";
+} from "@/lib/client-schemas";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -30,8 +30,6 @@ export async function POST(request: Request) {
       response_format: { type: "json_object" },
       temperature: 0.7,
     });
-
-    console.log("response is", response);
 
     const result = response.choices[0]?.message?.content ?? "";
 

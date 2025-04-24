@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { TestCard } from "@/components/test-card";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 // Mock data for testing
 const mockTests = [
@@ -45,7 +47,13 @@ const mockTests = [
   },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/");
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { type Message, generateMessagesSchema } from "@/lib/schema";
+import { type Message, generateMessagesSchema } from "@/lib/client-schemas";
 import { z } from "zod";
 
 const errorResponseSchema = z.object({

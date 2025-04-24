@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { type Message, generateMessagesSchema } from "@/lib/schema";
+import { type Message, generateMessagesSchema } from "@/lib/client-schemas";
 import { useGenerateMessages } from "@/hooks/useGenerateMessages";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const promptSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -73,6 +74,7 @@ export default function NewTestPage() {
   });
 
   const generateMutation = useGenerateMessages();
+  const router = useRouter();
 
   const onPromptSubmit = async (data: PromptFormData) => {
     try {
@@ -220,9 +222,56 @@ export default function NewTestPage() {
         {/* Right Column - Message Generation */}
         <div className="pl-8">
           <div>
-            <h2 className="mb-8 text-2xl font-semibold">
-              Generate User Messages
-            </h2>
+            <div className="mb-8 flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">Generate User Messages</h2>
+              <Button
+                variant="default"
+                className="hover:cursor-pointer"
+                onClick={async () => {
+                  const formData = promptForm.getValues();
+                  if (
+                    !formData.name ||
+                    !formData.systemPrompt ||
+                    !formData.model
+                  ) {
+                    toast.error("Please fill in all required fields");
+                    return;
+                  }
+                  if (messages.length === 0) {
+                    toast.error("Please generate or add some messages first");
+                    return;
+                  }
+                  try {
+                    const response = await fetch("/api/tests", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        name: formData.name,
+                        systemPrompt: formData.systemPrompt,
+                        model: formData.model,
+                        messages: messages,
+                      }),
+                    });
+                    if (!response.ok) {
+                      throw new Error("Failed to create test");
+                    }
+                    const rawData: unknown = await response.json();
+                    const data = {
+                      id: String((rawData as { id: unknown }).id),
+                    };
+                    toast.success("Test created successfully");
+                    router.push(`/dashboard/test-results/${data.id}`);
+                  } catch (error) {
+                    console.error("Failed to create test:", error);
+                    toast.error("Failed to create test");
+                  }
+                }}
+              >
+                Run Test
+              </Button>
+            </div>
             <p className="text-muted-foreground mb-6">
               Generated messages are potential user queries that might be asked
               given your system prompt.
