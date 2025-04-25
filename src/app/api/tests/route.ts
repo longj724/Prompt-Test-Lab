@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/server/db";
-import {
-  messages,
-  modelEnumValues,
-  responses,
-  tests,
-} from "@/server/db/schema";
+import { messages, responses, tests } from "@/server/db/schema";
 import OpenAI from "openai";
 import { messageSchema } from "@/lib/client-schemas";
 import { type Model } from "@/server/db/schema";

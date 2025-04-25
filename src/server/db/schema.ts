@@ -6,7 +6,7 @@ import {
   boolean,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { type AdapterAccount } from "next-auth/adapters";
 
 export const users = pgTable("user", {
