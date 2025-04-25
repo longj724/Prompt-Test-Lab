@@ -8,6 +8,20 @@
       "when": 1745469161083,
       "tag": "0000_lush_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1745552902417,
+      "tag": "0001_light_mad_thinker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745553309802,
+      "tag": "0002_mean_daredevil",
+      "breakpoints": true
     }
   ]
 }

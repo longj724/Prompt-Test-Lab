@@ -3,7 +3,6 @@ import { z } from "zod";
 export const messageSchema = z.object({
   id: z.string(),
   content: z.string().min(1, "Message content is required"),
-  createdAt: z.date(),
   included: z.boolean().default(true),
 });
 
@@ -56,3 +55,8 @@ export const testResultSchema = z.object({
 });
 
 export type TestResult = z.infer<typeof testResultSchema>;
+
+export const modelApiNameToDisplayName: Record<string, string> = {
+  "gpt-4o-mini-2024-07-18": "GPT-4o-mini",
+  "gpt-4.1-nano-2025-04-14": "GPT-4.1-nano",
+};

@@ -12,11 +12,13 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as z.infer<
+      typeof generateMessagesSchema
+    >;
     const { count, systemPrompt } = generateMessagesSchema.parse(body);
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-1106",
+      model: "gpt-4o-mini-2024-07-18",
       messages: [
         {
           role: "system",

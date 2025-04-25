@@ -48,11 +48,13 @@ export const sessions = pgTable("session", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const modelEnum = pgEnum("model", [
-  "gpt-4",
-  "gpt-3.5-turbo",
-  "gpt-4o-mini",
-]);
+export const modelEnumValues = [
+  "gpt-4.1-nano-2025-04-14",
+  "gpt-4o-mini-2024-07-18",
+] as const;
+
+export const modelEnum = pgEnum("model", modelEnumValues);
+export type Model = (typeof modelEnumValues)[number];
 
 export const tests = pgTable("tests", {
   id: text("id")
@@ -60,7 +62,7 @@ export const tests = pgTable("tests", {
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   systemPrompt: text("system_prompt").notNull(),
-  model: modelEnum("model").notNull(),
+  model: text("model").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

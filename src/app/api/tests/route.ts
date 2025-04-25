@@ -1,30 +1,36 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/db";
-import { messages, responses, tests } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { db } from "@/server/db";
+import {
+  messages,
+  modelEnumValues,
+  responses,
+  tests,
+} from "@/server/db/schema";
 import OpenAI from "openai";
-import Anthropic from "@anthropic-ai/sdk";
 import { messageSchema } from "@/lib/client-schemas";
+import { type Model } from "@/server/db/schema";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
-
 const createTestSchema = z.object({
   name: z.string().min(1),
   systemPrompt: z.string().min(1),
-  model: z.enum(["gpt-4", "gpt-3.5-turbo", "claude-3"]),
+  model: z.enum(["gpt-4o-mini", "gpt-4.1-nano"]),
   messages: z.array(messageSchema),
 });
 
+const modelDisplayNameToApiName: Record<string, Model> = {
+  "gpt-4o-mini": "gpt-4o-mini-2024-07-18",
+  "gpt-4.1-nano": "gpt-4.1-nano-2025-04-14",
+};
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as z.infer<typeof createTestSchema>;
+
     const {
       name,
       systemPrompt,
@@ -32,17 +38,22 @@ export async function POST(request: Request) {
       messages: testMessages,
     } = createTestSchema.parse(body);
 
-    // Create test
     const [test] = await db
       .insert(tests)
       .values({
         name,
         systemPrompt,
-        model,
+        model: modelDisplayNameToApiName[model] as string,
       })
       .returning();
 
-    // Create messages
+    if (!test) {
+      return NextResponse.json(
+        { error: "Failed to create test" },
+        { status: 500 },
+      );
+    }
+
     const createdMessages = await db
       .insert(messages)
       .values(
@@ -54,31 +65,21 @@ export async function POST(request: Request) {
       )
       .returning();
 
-    // Generate responses based on the model
     const responsePromises = createdMessages.map(async (message) => {
-      let response: string;
+      const result = await openai.chat.completions.create({
+        model: modelDisplayNameToApiName[model] as string,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message.content },
+        ],
+      });
+      const response = result.choices[0]?.message?.content ?? "";
 
-      if (model === "claude-3") {
-        const result = await anthropic.messages.create({
-          model: "claude-3-opus-20240229",
-          system: systemPrompt,
-          messages: [{ role: "user", content: message.content }],
-        });
-        response = result.content[0].text;
-      } else {
-        const result = await openai.chat.completions.create({
-          model,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: message.content },
-          ],
-        });
-        response = result.choices[0]?.message?.content ?? "";
-      }
+      console.log("response is", response);
 
       return db.insert(responses).values({
         messageId: message.id,
-        model,
+        model: modelDisplayNameToApiName[model]!,
         content: response,
       });
     });

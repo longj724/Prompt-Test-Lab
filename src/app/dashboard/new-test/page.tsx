@@ -62,7 +62,7 @@ export default function NewTestPage() {
     defaultValues: {
       name: initialName,
       systemPrompt: initialSystemPrompt,
-      model: "gpt-4",
+      model: "gpt-4o-mini",
     },
   });
 
@@ -130,7 +130,6 @@ export default function NewTestPage() {
     const newMessage: Message = {
       id: crypto.randomUUID(),
       content: newMessageContent.trim(),
-      createdAt: new Date(),
       included: true,
     };
 
@@ -201,12 +200,11 @@ export default function NewTestPage() {
                           <SelectValue placeholder="Select a model" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="gpt-4">OpenAI GPT-4</SelectItem>
-                          <SelectItem value="gpt-3.5-turbo">
-                            OpenAI GPT-3.5 Turbo
+                          <SelectItem value="gpt-4.1-nano">
+                            OpenAI GPT-4.1-nano
                           </SelectItem>
-                          <SelectItem value="claude-3">
-                            Anthropic Claude 3
+                          <SelectItem value="gpt-4o-mini">
+                            OpenAI GPT-4o-mini
                           </SelectItem>
                         </SelectContent>
                       </Select>

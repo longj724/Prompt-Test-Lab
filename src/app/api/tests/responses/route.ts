@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/db";
-import { responses } from "@/db/schema";
+import { db } from "@/server/db";
+import { responses } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 const updateResponseSchema = z.object({
@@ -12,7 +12,7 @@ const updateResponseSchema = z.object({
 
 export async function PATCH(request: Request) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as z.infer<typeof updateResponseSchema>;
     const { responseId, rating, notes } = updateResponseSchema.parse(body);
 
     const [updatedResponse] = await db
