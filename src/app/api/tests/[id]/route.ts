@@ -5,11 +5,13 @@ import { eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
+
     const test = await db.query.tests.findFirst({
-      where: eq(tests.id, params.id),
+      where: eq(tests.id, id),
       with: {
         messages: {
           with: {
@@ -23,7 +25,6 @@ export async function GET(
       return NextResponse.json({ error: "Test not found" }, { status: 404 });
     }
 
-    // Transform the data to match our TestResult type
     const result = {
       id: test.id,
       name: test.name,
@@ -38,11 +39,12 @@ export async function GET(
           model: response.model,
           response: response.content,
           timestamp: response.createdAt,
-          rating: response.rating,
           notes: response.notes,
         })),
       })),
     };
+
+    console.log("result is", result);
 
     return NextResponse.json(result);
   } catch (error) {

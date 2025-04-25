@@ -10,13 +10,11 @@ import { Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
-export default function TestResultsPage({
-  params,
-}: {
-  params: { "test-id": string };
-}) {
-  const { data: test, isLoading } = useTestResult(params["test-id"]);
+const TestResultsPage = () => {
+  const { id } = useParams();
+  const { data: test, isLoading } = useTestResult(id as string);
   const updateResponse = useUpdateResponse();
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
 
@@ -34,6 +32,8 @@ export default function TestResultsPage({
     );
   }
 
+  console.log("test is", test);
+
   if (!test) {
     return (
       <div className="container mx-auto py-8">
@@ -49,15 +49,6 @@ export default function TestResultsPage({
         .map((result) => result.model),
     ),
   );
-
-  const handleRating = async (responseId: string, rating: number) => {
-    try {
-      await updateResponse.mutateAsync({ responseId, rating });
-      toast.success("Rating updated");
-    } catch (error) {
-      toast.error("Failed to update rating");
-    }
-  };
 
   const handleNotesChange = async (responseId: string, notes: string) => {
     try {
@@ -109,32 +100,6 @@ export default function TestResultsPage({
                         </p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="flex gap-2">
-                          <Button
-                            variant={result.rating === 5 ? "default" : "ghost"}
-                            size="icon"
-                            className="h-8 w-8 hover:cursor-pointer"
-                            onClick={() => handleRating(result.id, 5)}
-                          >
-                            <ThumbsUp className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant={result.rating === 1 ? "default" : "ghost"}
-                            size="icon"
-                            className="h-8 w-8 hover:cursor-pointer"
-                            onClick={() => handleRating(result.id, 1)}
-                          >
-                            <ThumbsDown className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant={result.rating === 3 ? "default" : "ghost"}
-                            size="icon"
-                            className="h-8 w-8 hover:cursor-pointer"
-                            onClick={() => handleRating(result.id, 3)}
-                          >
-                            <Star className="h-4 w-4" />
-                          </Button>
-                        </div>
                         <Textarea
                           placeholder="Add notes..."
                           className="mt-2 h-20"
@@ -154,4 +119,6 @@ export default function TestResultsPage({
       </Tabs>
     </div>
   );
-}
+};
+
+export default TestResultsPage;

@@ -6,6 +6,7 @@ import {
   boolean,
   primaryKey,
 } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 import { type AdapterAccount } from "next-auth/adapters";
 
 export const users = pgTable("user", {
@@ -91,6 +92,25 @@ export const responses = pgTable("responses", {
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const testsRelations = relations(tests, ({ many }) => ({
+  messages: many(messages),
+}));
+
+export const messagesRelations = relations(messages, ({ one, many }) => ({
+  test: one(tests, {
+    fields: [messages.testId],
+    references: [tests.id],
+  }),
+  responses: many(responses),
+}));
+
+export const responsesRelations = relations(responses, ({ one }) => ({
+  message: one(messages, {
+    fields: [responses.messageId],
+    references: [messages.id],
+  }),
+}));
 
 export const schema = {
   users,

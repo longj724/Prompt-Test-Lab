@@ -45,7 +45,6 @@ export const testResultSchema = z.object({
             model: z.string(),
             response: z.string(),
             timestamp: z.coerce.date(),
-            rating: z.number().min(1).max(5).optional(),
             notes: z.string().optional(),
           }),
         )
