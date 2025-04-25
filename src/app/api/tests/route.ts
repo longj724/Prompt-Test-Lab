@@ -5,6 +5,7 @@ import { messages, responses, tests } from "@/server/db/schema";
 import OpenAI from "openai";
 import { messageSchema } from "@/lib/client-schemas";
 import { type Model } from "@/server/db/schema";
+import { count } from "drizzle-orm";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -21,6 +22,33 @@ const modelDisplayNameToApiName: Record<string, Model> = {
   "gpt-4o-mini": "gpt-4o-mini-2024-07-18",
   "gpt-4.1-nano": "gpt-4.1-nano-2025-04-14",
 };
+
+export async function GET() {
+  try {
+    const allTests = await db.query.tests.findMany({
+      with: {
+        messages: true,
+      },
+      orderBy: (tests, { desc }) => [desc(tests.createdAt)],
+    });
+
+    const formattedTests = allTests.map((test) => ({
+      id: test.id,
+      name: test.name,
+      systemPrompt: test.systemPrompt,
+      createdAt: test.createdAt,
+      messageCount: test.messages.length,
+    }));
+
+    return NextResponse.json(formattedTests);
+  } catch (error) {
+    console.error("Error fetching tests:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch tests" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function POST(request: Request) {
   try {

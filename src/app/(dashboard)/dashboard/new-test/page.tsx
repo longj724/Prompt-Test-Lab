@@ -260,7 +260,7 @@ export default function NewTestPage() {
                       id: String((rawData as { id: unknown }).id),
                     };
                     toast.success("Test created successfully");
-                    router.push(`/dashboard/test-results/${data.id}`);
+                    router.push(`/test-results/${data.id}`);
                   } catch (error) {
                     console.error("Failed to create test:", error);
                     toast.error("Failed to create test");

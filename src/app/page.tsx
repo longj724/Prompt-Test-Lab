@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
 
 export default async function HomePage() {
-  const session = await auth();
-
-  console.log("session is", session);
-
   return (
     <div className="flex min-h-screen w-full flex-col items-center">
       <main className="w-full flex-1">
