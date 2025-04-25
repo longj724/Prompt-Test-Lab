@@ -9,12 +9,35 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Plus, ChevronDown } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { modelApiNameToDisplayName } from "@/lib/client-schemas";
 
 const TestResultsPage = () => {
   const { id } = useParams();
   const { data: test, isLoading } = useTestResult(id as string);
   const updateResponse = useUpdateResponse();
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [closedResponses, setClosedResponses] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const toggleResponse = (messageId: string) => {
+    setClosedResponses((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(messageId)) {
+        newSet.delete(messageId);
+      } else {
+        newSet.add(messageId);
+      }
+      return newSet;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -29,8 +52,6 @@ const TestResultsPage = () => {
       </div>
     );
   }
-
-  console.log("test is", test);
 
   if (!test) {
     return (
@@ -48,73 +69,128 @@ const TestResultsPage = () => {
     ),
   );
 
-  const handleNotesChange = async (responseId: string, notes: string) => {
-    try {
-      await updateResponse.mutateAsync({ responseId, notes });
-      toast.success("Notes updated");
-    } catch (error) {
-      toast.error("Failed to update notes");
-    }
-  };
+  // const handleNotesChange = async (responseId: string, notes: string) => {
+  //   try {
+  //     await updateResponse.mutateAsync({ responseId, notes });
+  //     toast.success("Notes updated");
+  //   } catch (error) {
+  //     toast.error("Failed to update notes");
+  //   }
+  // };
 
   return (
-    <div className="container mx-auto space-y-6 py-8">
-      <div>
-        <h1 className="mb-2 text-2xl font-bold">{test.name}</h1>
-        <p className="text-muted-foreground">{test.systemPrompt}</p>
+    <div className="container mx-auto py-8">
+      <div className="mb-8">
+        <h1 className="mb-4 text-3xl font-bold">{test.name}</h1>
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              System Prompt:
+            </CardTitle>
+            <p className="mt-2 text-sm">{test.systemPrompt}</p>
+          </CardHeader>
+        </Card>
       </div>
 
-      <Tabs defaultValue={models[0]} onValueChange={setSelectedModel}>
-        <TabsList>
-          {models.map((model) => (
-            <TabsTrigger key={model} value={model}>
-              {model}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {models.map((model) => (
-          <TabsContent key={model} value={model}>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {test.messages.map((message) => {
-                const result = message.results?.find((r) => r.model === model);
-                if (!result) return null;
-
-                return (
-                  <Card key={`${message.id}-${model}`}>
-                    <CardHeader>
-                      <CardTitle className="text-sm font-medium">
-                        User Message
-                      </CardTitle>
-                      <p className="mt-2">{message.content}</p>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <h4 className="mb-2 text-sm font-medium">
-                          AI Response
-                        </h4>
-                        <p className="text-muted-foreground text-sm">
-                          {result.response}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <Textarea
-                          placeholder="Add notes..."
-                          className="mt-2 h-20"
-                          defaultValue={result.notes}
-                          onChange={(e) =>
-                            handleNotesChange(result.id, e.target.value)
-                          }
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+      <div className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <Tabs
+            defaultValue={models[0]}
+            className="flex-1"
+            onValueChange={setSelectedModel}
+          >
+            <div className="flex items-center justify-between border-b">
+              <TabsList className="h-10">
+                {models.map((model) => (
+                  <TabsTrigger
+                    key={model}
+                    value={model}
+                    className="data-[state=active]:bg-background data-[state=active]:border-primary"
+                  >
+                    {modelApiNameToDisplayName[model]}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <Button variant="outline" size="sm" className="mb-2">
+                <Plus className="mr-2 h-4 w-4" />
+                Run Test With New Model
+              </Button>
             </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+
+            {models.map((model) => (
+              <TabsContent key={model} value={model} className="mt-6">
+                <div className="space-y-6">
+                  {test.messages.map((message) => {
+                    const result = message.results?.find(
+                      (r) => r.model === model,
+                    );
+                    if (!result) return null;
+
+                    const isClosed = closedResponses.has(message.id);
+
+                    return (
+                      <Card key={`${message.id}-${model}`}>
+                        <CardContent className="pt-6">
+                          <div className="flex items-start space-x-3">
+                            <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                              <span className="text-sm">U</span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-1 text-sm font-medium">
+                                User Message
+                              </div>
+                              <p className="text-sm">{message.content}</p>
+                            </div>
+                          </div>
+
+                          <Collapsible
+                            open={!isClosed}
+                            onOpenChange={() => toggleResponse(message.id)}
+                          >
+                            <CollapsibleContent>
+                              <div className="mt-6 flex items-start space-x-3">
+                                <div className="bg-primary/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                                  <span className="text-primary text-sm">
+                                    AI
+                                  </span>
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="mb-1 text-sm font-medium">
+                                    AI Response
+                                  </div>
+                                  <p className="text-sm whitespace-pre-wrap">
+                                    {result.response}
+                                  </p>
+                                </div>
+                              </div>
+                            </CollapsibleContent>
+
+                            <div className="mt-4 flex items-center justify-center border-t pt-4">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-2"
+                                onClick={() => toggleResponse(message.id)}
+                              >
+                                {isClosed ? "Show Response" : "Hide Response"}
+                                <ChevronDown
+                                  className={`h-4 w-4 transition-transform ${
+                                    !isClosed ? "rotate-180" : ""
+                                  }`}
+                                />
+                              </Button>
+                            </div>
+                          </Collapsible>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
