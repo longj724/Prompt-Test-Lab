@@ -4,11 +4,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil, Trash2, X, Check, Plus } from "lucide-react";
+import { Pencil, Trash2, X, Check, Plus, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Internal Dependencies
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,8 @@ export default function NewTestPage() {
   const searchParams = useSearchParams();
   const initialName = searchParams.get("name") ?? "";
   const systemPromptParam = searchParams.get("systemPrompt");
+  const queryClient = useQueryClient();
+  const [isRunningTest, setIsRunningTest] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -257,6 +260,7 @@ export default function NewTestPage() {
               <Button
                 variant="default"
                 className="hover:cursor-pointer"
+                disabled={isRunningTest}
                 onClick={async () => {
                   const formData = promptForm.getValues();
                   if (
@@ -272,6 +276,7 @@ export default function NewTestPage() {
                     return;
                   }
                   try {
+                    setIsRunningTest(true);
                     const response = await fetch("/api/tests", {
                       method: "POST",
                       headers: {
@@ -291,15 +296,29 @@ export default function NewTestPage() {
                     const data = {
                       id: String((rawData as { id: unknown }).id),
                     };
+
+                    await queryClient.invalidateQueries({
+                      queryKey: ["tests"],
+                    });
+
                     toast.success("Test created successfully");
                     router.push(`/test-results/${data.id}`);
                   } catch (error) {
                     console.error("Failed to create test:", error);
                     toast.error("Failed to create test");
+                  } finally {
+                    setIsRunningTest(false);
                   }
                 }}
               >
-                Run Test
+                {isRunningTest ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Running Test...
+                  </>
+                ) : (
+                  "Run Test"
+                )}
               </Button>
             </div>
             <p className="text-muted-foreground mb-6">
