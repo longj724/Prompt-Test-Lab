@@ -63,21 +63,32 @@ export const tests = pgTable("tests", {
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   systemPrompt: text("system_prompt").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+});
+
+export const modelTests = pgTable("model_tests", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  testId: text("test_id")
+    .notNull()
+    .references(() => tests.id, { onDelete: "cascade" }),
   model: text("model").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const messages = pgTable("messages", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  testId: text("test_id")
-    .references(() => tests.id, { onDelete: "cascade" })
-    .notNull(),
+  modelTestId: text("model_test_id")
+    .notNull()
+    .references(() => modelTests.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   included: boolean("included").default(true).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const responses = pgTable("responses", {
@@ -85,22 +96,30 @@ export const responses = pgTable("responses", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   messageId: text("message_id")
-    .references(() => messages.id, { onDelete: "cascade" })
-    .notNull(),
+    .notNull()
+    .references(() => messages.id, { onDelete: "cascade" }),
   model: text("model").notNull(),
   content: text("content").notNull(),
   notes: text("notes"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const testsRelations = relations(tests, ({ many }) => ({
+  modelTests: many(modelTests),
+}));
+
+export const modelTestsRelations = relations(modelTests, ({ one, many }) => ({
+  test: one(tests, {
+    fields: [modelTests.testId],
+    references: [tests.id],
+  }),
   messages: many(messages),
 }));
 
 export const messagesRelations = relations(messages, ({ one, many }) => ({
-  test: one(tests, {
-    fields: [messages.testId],
-    references: [tests.id],
+  modelTest: one(modelTests, {
+    fields: [messages.modelTestId],
+    references: [modelTests.id],
   }),
   responses: many(responses),
 }));
@@ -117,6 +136,7 @@ export const schema = {
   sessions,
   accounts,
   tests,
+  modelTests,
   messages,
   responses,
 };

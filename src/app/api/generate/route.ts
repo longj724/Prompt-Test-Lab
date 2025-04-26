@@ -1,10 +1,13 @@
+// External Dependencies
 import OpenAI from "openai";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+
+// Internal Dependencies
 import {
   generateMessagesSchema,
   generateApiResponseSchema,
 } from "@/lib/client-schemas";
-import { NextResponse } from "next/server";
-import { z } from "zod";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,

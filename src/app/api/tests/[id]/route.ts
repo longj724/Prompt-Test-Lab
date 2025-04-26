@@ -16,9 +16,13 @@ export async function GET(
     const test = await db.query.tests.findFirst({
       where: eq(tests.id, id),
       with: {
-        messages: {
+        modelTests: {
           with: {
-            responses: true,
+            messages: {
+              with: {
+                responses: true,
+              },
+            },
           },
         },
       },
@@ -32,17 +36,21 @@ export async function GET(
       id: test.id,
       name: test.name,
       systemPrompt: test.systemPrompt,
-      model: test.model,
-      messages: test.messages.map((message) => ({
-        id: message.id,
-        content: message.content,
-        createdAt: message.createdAt,
-        included: message.included,
-        results: message.responses.map((response) => ({
-          model: response.model,
-          response: response.content,
-          timestamp: response.createdAt,
-          notes: response.notes,
+      modelTests: test.modelTests.map((modelTest) => ({
+        id: modelTest.id,
+        model: modelTest.model,
+        messages: modelTest.messages.map((message) => ({
+          id: message.id,
+          content: message.content,
+          createdAt: message.createdAt,
+          included: message.included,
+          responses: message.responses.map((response) => ({
+            id: response.id,
+            model: response.model,
+            content: response.content,
+            timestamp: response.createdAt,
+            notes: response.notes,
+          })),
         })),
       })),
     };

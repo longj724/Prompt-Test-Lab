@@ -2,12 +2,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import OpenAI from "openai";
-import { anthropic } from "@ai-sdk/anthropic";
-import { generateText } from "ai";
 
 // Internal Dependencies
 import { db } from "@/server/db";
-import { messages, responses, tests } from "@/server/db/schema";
+import { messages, modelTests, responses, tests } from "@/server/db/schema";
 import { messageSchema } from "@/lib/client-schemas";
 
 const openai = new OpenAI({
@@ -38,7 +36,11 @@ export async function GET() {
   try {
     const allTests = await db.query.tests.findMany({
       with: {
-        messages: true,
+        modelTests: {
+          with: {
+            messages: true,
+          },
+        },
       },
       orderBy: (tests, { desc }) => [desc(tests.createdAt)],
     });
@@ -48,7 +50,10 @@ export async function GET() {
       name: test.name,
       systemPrompt: test.systemPrompt,
       createdAt: test.createdAt,
-      messageCount: test.messages.length,
+      messageCount: test.modelTests.reduce(
+        (acc, mt) => acc + mt.messages.length,
+        0,
+      ),
     }));
 
     return NextResponse.json(formattedTests);
@@ -77,7 +82,6 @@ export async function POST(request: Request) {
       .values({
         name,
         systemPrompt,
-        model,
       })
       .returning();
 
@@ -88,11 +92,26 @@ export async function POST(request: Request) {
       );
     }
 
+    const [modelTest] = await db
+      .insert(modelTests)
+      .values({
+        testId: test.id,
+        model,
+      })
+      .returning();
+
+    if (!modelTest) {
+      return NextResponse.json(
+        { error: "Failed to create model test" },
+        { status: 500 },
+      );
+    }
+
     const createdMessages = await db
       .insert(messages)
       .values(
         testMessages.map((msg) => ({
-          testId: test.id,
+          modelTestId: modelTest.id,
           content: msg.content,
           included: msg.included,
         })),
@@ -123,21 +142,25 @@ export async function POST(request: Request) {
       await Promise.all(responsePromises);
     } else if (provider === "anthropic") {
       const responsePromises = createdMessages.map(async (message) => {
-        const { text } = await generateText({
-          model: anthropic(model),
-          prompt: message.content,
-          system: systemPrompt,
+        const result = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message.content },
+          ],
         });
+        const response = result.choices[0]?.message?.content ?? "";
 
         return db.insert(responses).values({
           messageId: message.id,
           model,
-          content: text,
+          content: response,
         });
       });
 
       await Promise.all(responsePromises);
     }
+
     return NextResponse.json({ id: test.id });
   } catch (error) {
     console.error("Error creating test:", error);

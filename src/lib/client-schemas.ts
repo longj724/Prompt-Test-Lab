@@ -32,24 +32,28 @@ export const testResultSchema = z.object({
   id: z.string(),
   name: z.string(),
   systemPrompt: z.string(),
-  model: z.string(),
-  messages: z.array(
+  modelTests: z.array(
     z.object({
       id: z.string(),
-      content: z.string(),
+      model: z.string(),
       createdAt: z.string(),
-      included: z.boolean(),
-      results: z
-        .array(
-          z.object({
-            id: z.string(),
-            model: z.string(),
-            response: z.string(),
-            timestamp: z.coerce.date(),
-            notes: z.string().optional(),
-          }),
-        )
-        .optional(),
+      messages: z.array(
+        z.object({
+          id: z.string(),
+          content: z.string(),
+          createdAt: z.string(),
+          included: z.boolean(),
+          responses: z.array(
+            z.object({
+              id: z.string(),
+              model: z.string(),
+              content: z.string(),
+              timestamp: z.coerce.date(),
+              notes: z.string().optional(),
+            }),
+          ),
+        }),
+      ),
     }),
   ),
 });

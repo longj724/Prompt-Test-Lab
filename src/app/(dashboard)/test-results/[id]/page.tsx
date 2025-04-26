@@ -16,12 +16,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { modelApiNameToDisplayName } from "@/lib/client-schemas";
+import { toast } from "sonner";
 
 const TestResultsPage = () => {
   const { id } = useParams();
   const { data: test, isLoading } = useTestResult(id as string);
   const updateResponse = useUpdateResponse();
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedModelTestId, setSelectedModelTestId] = useState<string | null>(
+    null,
+  );
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
     null,
   );
@@ -50,32 +53,53 @@ const TestResultsPage = () => {
     );
   }
 
-  const models = Array.from(
-    new Set(
-      test.messages
-        .flatMap((m) => m.results ?? [])
-        .map((result) => result.model),
-    ),
+  // Set initial selected model test if not set
+  if (!selectedModelTestId && test.modelTests.length > 0) {
+    setSelectedModelTestId(test.modelTests[0]?.id ?? null);
+  }
+
+  const selectedModelTest = test.modelTests.find(
+    (mt) => mt.id === selectedModelTestId,
   );
 
   // Set initial selected message if not set
-  if (!selectedMessageId && test?.messages.length > 0) {
-    setSelectedMessageId(test?.messages[0]?.id ?? null);
+  if (
+    selectedModelTest &&
+    Array.isArray(selectedModelTest.messages) &&
+    selectedModelTest.messages.length > 0 &&
+    !selectedMessageId
+  ) {
+    setSelectedMessageId(selectedModelTest.messages[0]?.id ?? null);
   }
 
-  const selectedMessage = test?.messages.find(
-    (m) => m.id === selectedMessageId,
-  );
-  const selectedResult = selectedMessage?.results?.find(
-    (r) => r.model === (selectedModel ?? models[0]),
-  );
+  const selectedMessage =
+    selectedModelTest && Array.isArray(selectedModelTest.messages)
+      ? selectedModelTest.messages.find((m) => m.id === selectedMessageId)
+      : undefined;
 
-  const filteredMessages = test.messages.filter((message) =>
-    message.content.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const selectedResponse =
+    selectedMessage && Array.isArray(selectedMessage.responses)
+      ? selectedMessage.responses.find(
+          (r) => r.model === selectedModelTest?.model,
+        )
+      : undefined;
+
+  const filteredMessages =
+    selectedModelTest?.messages.filter((message) =>
+      message.content.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) ?? [];
 
   const formatDate = (timestamp: string) =>
     new Date(timestamp).toISOString().split("T")[0];
+
+  const handleCopyResponse = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      toast.success("Response copied to clipboard");
+    } catch (error) {
+      toast.error("Failed to copy response");
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -108,16 +132,19 @@ const TestResultsPage = () => {
       </div>
 
       <div className="mb-4">
-        <Tabs defaultValue={models[0]} onValueChange={setSelectedModel}>
+        <Tabs
+          value={selectedModelTestId ?? undefined}
+          onValueChange={setSelectedModelTestId}
+        >
           <div className="flex items-center justify-between">
             <TabsList className="bg-muted text-muted-foreground h-9 p-1">
-              {models.map((model) => (
+              {test.modelTests.map((modelTest) => (
                 <TabsTrigger
-                  key={model}
-                  value={model}
+                  key={modelTest.id}
+                  value={modelTest.id}
                   className="ring-offset-background focus-visible:ring-ring data-[state=active]:bg-background data-[state=active]:text-foreground relative h-7 rounded-sm px-3 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow"
                 >
-                  {modelApiNameToDisplayName[model]}
+                  {modelApiNameToDisplayName[modelTest.model]}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -134,13 +161,20 @@ const TestResultsPage = () => {
         <div className="flex items-center justify-between border-b px-6 py-4">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">
-              {test.messages.length}{" "}
-              {test.messages.length === 1 ? "message" : "messages"} tested
+              {selectedModelTest?.messages.length ?? 0}{" "}
+              {(selectedModelTest?.messages.length ?? 0) === 1
+                ? "message"
+                : "messages"}{" "}
+              tested
             </span>
           </div>
           <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <span>Test run:</span>
-            <time>{new Date().toLocaleDateString()}</time>
+            <time>
+              {selectedModelTest?.createdAt
+                ? formatDate(selectedModelTest.createdAt)
+                : "-"}
+            </time>
           </div>
         </div>
 
@@ -205,7 +239,7 @@ const TestResultsPage = () => {
                     </div>
                   </div>
 
-                  {selectedResult && (
+                  {selectedResponse && (
                     <div>
                       <div className="flex items-start gap-3">
                         <div className="bg-primary/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
@@ -214,13 +248,24 @@ const TestResultsPage = () => {
                         <div className="min-w-0 flex-1">
                           <div className="mb-2 flex items-center justify-between">
                             <span className="text-sm font-medium">
-                              {modelApiNameToDisplayName[selectedResult.model]}{" "}
+                              {
+                                modelApiNameToDisplayName[
+                                  selectedModelTest?.model ?? ""
+                                ]
+                              }{" "}
                               Response
                             </span>
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
                                 className="cursor-pointer gap-2"
+                                onClick={() => {
+                                  if (selectedResponse.content) {
+                                    void handleCopyResponse(
+                                      selectedResponse.content,
+                                    );
+                                  }
+                                }}
                               >
                                 <Copy className="h-4 w-4" />
                                 Copy
@@ -229,7 +274,7 @@ const TestResultsPage = () => {
                           </div>
                           <div className="prose prose-sm max-w-none">
                             <p className="whitespace-pre-wrap">
-                              {selectedResult.response}
+                              {selectedResponse.content}
                             </p>
                           </div>
                         </div>

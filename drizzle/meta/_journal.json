@@ -29,6 +29,13 @@
       "when": 1745627344459,
       "tag": "0003_chunky_exiles",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745686019725,
+      "tag": "0004_early_makkari",
+      "breakpoints": true
     }
   ]
 }
