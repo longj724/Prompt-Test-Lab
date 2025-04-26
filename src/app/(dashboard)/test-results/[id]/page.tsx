@@ -74,16 +74,8 @@ const TestResultsPage = () => {
     message.content.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
+  const formatDate = (timestamp: string) =>
+    new Date(timestamp).toISOString().split("T")[0];
 
   return (
     <div className="container mx-auto py-8">
@@ -231,7 +223,7 @@ const TestResultsPage = () => {
                                 className="cursor-pointer gap-2"
                               >
                                 <Copy className="h-4 w-4" />
-                                Copy Response
+                                Copy
                               </Button>
                             </div>
                           </div>
