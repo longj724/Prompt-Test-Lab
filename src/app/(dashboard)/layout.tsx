@@ -14,6 +14,7 @@ import { NavUser } from "@/components/user-info";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { SidebarTestResults } from "@/components/sidebar-test-results";
+import { DashboardMenuItem } from "@/components/dashboard-menu-item";
 
 export default async function DashboardLayout({
   children,
@@ -45,14 +46,7 @@ export default async function DashboardLayout({
           </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive tooltip="Dashboard">
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    <LayoutDashboard className="h-4 w-4" />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <DashboardMenuItem />
               <SidebarTestResults />
             </SidebarMenu>
           </SidebarContent>
