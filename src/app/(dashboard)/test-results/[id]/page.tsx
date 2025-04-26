@@ -147,13 +147,13 @@ const TestResultsPage = () => {
 
                     return (
                       <Card key={`${message.id}-${model}`}>
-                        <CardContent className="pt-6">
+                        <CardContent className="pt-4">
                           <div className="flex items-start space-x-3">
                             <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
                               <span className="text-sm">U</span>
                             </div>
                             <div className="min-w-0 flex-1">
-                              <div className="mb-1 text-sm font-medium">
+                              <div className="mb-0.5 text-sm font-medium">
                                 User Message
                               </div>
                               <p className="text-sm">{message.content}</p>
@@ -165,14 +165,14 @@ const TestResultsPage = () => {
                             onOpenChange={() => toggleResponse(message.id)}
                           >
                             <CollapsibleContent>
-                              <div className="mt-6 flex items-start space-x-3">
+                              <div className="mt-4 flex items-start space-x-3">
                                 <div className="bg-primary/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
                                   <span className="text-primary text-sm">
                                     AI
                                   </span>
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <div className="mb-1 text-sm font-medium">
+                                  <div className="mb-0.5 text-sm font-medium">
                                     AI Response
                                   </div>
                                   <p className="text-sm whitespace-pre-wrap">
@@ -182,7 +182,7 @@ const TestResultsPage = () => {
                               </div>
                             </CollapsibleContent>
 
-                            <div className="mt-4 flex items-center justify-center border-t pt-4">
+                            <div className="mt-3 flex items-center justify-center border-t pt-3">
                               <Button
                                 variant="ghost"
                                 size="sm"
