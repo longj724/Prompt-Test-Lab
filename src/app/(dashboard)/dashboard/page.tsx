@@ -1,6 +1,11 @@
 "use client";
 
+// External Dependencies
+import { useState } from "react";
 import { Search } from "lucide-react";
+import Link from "next/link";
+
+// Internal Dependencies
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,9 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { TestCard } from "@/components/test-card";
-import Link from "next/link";
 import { useTests } from "@/hooks/use-tests";
-import { useState } from "react";
 
 export default function DashboardPage() {
   const { data: tests, isLoading, error } = useTests();
@@ -53,7 +56,9 @@ export default function DashboardPage() {
       <div className="w-full">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Your Tests</h1>
+            <h1 className="mb-2 text-3xl font-bold tracking-tight">
+              Your Tests
+            </h1>
             <p className="text-muted-foreground">
               Manage and view all your prompt tests
             </p>
