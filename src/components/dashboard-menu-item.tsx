@@ -1,9 +1,13 @@
 "use client";
 
+// External Dependencies
 import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+// Internal Dependencies
 import { SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 export function DashboardMenuItem() {
   const pathname = usePathname();
@@ -13,7 +17,7 @@ export function DashboardMenuItem() {
     <SidebarMenuItem>
       <SidebarMenuButton
         asChild
-        isActive={isDashboardRoute}
+        className={cn(isDashboardRoute && "active")}
         tooltip="Dashboard"
       >
         <Link href="/dashboard" className="flex items-center gap-2">

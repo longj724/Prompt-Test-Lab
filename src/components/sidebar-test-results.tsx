@@ -70,8 +70,8 @@ export function SidebarTestResults() {
                   <SidebarMenuSubButton
                     asChild
                     className={cn(
-                      test.id === currentTestId &&
-                        "bg-accent text-accent-foreground",
+                      "transition-colors",
+                      test.id === currentTestId && "active",
                     )}
                   >
                     <Link

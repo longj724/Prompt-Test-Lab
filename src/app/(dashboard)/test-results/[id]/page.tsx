@@ -93,7 +93,6 @@ const TestResultsPage = () => {
                 <p className="mt-2 text-sm">{test.systemPrompt}</p>
               </div>
               <Button
-                variant="outline"
                 size="sm"
                 className="cursor-pointer"
                 onClick={() =>
@@ -187,7 +186,7 @@ const TestResultsPage = () => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="gap-2"
+                                className="cursor-pointer gap-2"
                                 onClick={() => toggleResponse(message.id)}
                               >
                                 {isClosed ? "Show Response" : "Hide Response"}

@@ -1,18 +1,17 @@
-import { LayoutDashboard } from "lucide-react";
-import Link from "next/link";
+// External Dependencies
+import { redirect } from "next/navigation";
+
+// Internal Dependencies
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { NavUser } from "@/components/user-info";
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { SidebarTestResults } from "@/components/sidebar-test-results";
 import { DashboardMenuItem } from "@/components/dashboard-menu-item";
 
@@ -23,8 +22,6 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
   const user = session?.user;
-
-  console.log(user);
 
   if (!user) {
     redirect("/sign-in");
