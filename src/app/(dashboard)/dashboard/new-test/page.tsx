@@ -1,8 +1,16 @@
 "use client";
 
+// External Dependencies
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Pencil, Trash2, X, Check, Plus } from "lucide-react";
+import { z } from "zod";
+import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+// Internal Dependencies
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +22,6 @@ import {
   FormMessage,
   FormLabel,
 } from "@/components/ui/form";
-import { Pencil, Trash2, X, Check, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,10 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { type Message, generateMessagesSchema } from "@/lib/client-schemas";
 import { useGenerateMessages } from "@/hooks/useGenerateMessages";
-import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -37,7 +41,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
 
 const promptSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -52,7 +55,7 @@ type PromptFormData = z.infer<typeof promptSchema>;
 export default function NewTestPage() {
   const searchParams = useSearchParams();
   const initialName = searchParams.get("name") ?? "";
-  const initialSystemPrompt = searchParams.get("systemPrompt") ?? "";
+  const systemPromptParam = searchParams.get("systemPrompt");
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -63,7 +66,7 @@ export default function NewTestPage() {
     resolver: zodResolver(promptSchema),
     defaultValues: {
       name: initialName,
-      systemPrompt: initialSystemPrompt,
+      systemPrompt: systemPromptParam ?? "",
       model: "gpt-4o-mini-2024-07-18",
     },
   });

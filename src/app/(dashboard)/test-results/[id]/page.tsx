@@ -1,9 +1,9 @@
 "use client";
 
 // External Dependencies
-import { Plus, ChevronDown } from "lucide-react";
+import { Plus, ChevronDown, Copy } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 // Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
@@ -20,6 +20,7 @@ const TestResultsPage = () => {
   const { data: test, isLoading } = useTestResult(id as string);
   const updateResponse = useUpdateResponse();
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const router = useRouter();
 
   // Initialize closedResponses with all message IDs to hide them by default
   const [closedResponses, setClosedResponses] = useState<Set<string>>(() => {
@@ -84,10 +85,27 @@ const TestResultsPage = () => {
         <h1 className="mb-4 text-3xl font-bold">{test.name}</h1>
         <Card className="mt-4">
           <CardHeader>
-            <CardTitle className="text-muted-foreground text-sm font-medium">
-              System Prompt:
-            </CardTitle>
-            <p className="mt-2 text-sm">{test.systemPrompt}</p>
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-muted-foreground text-sm font-medium">
+                  System Prompt:
+                </CardTitle>
+                <p className="mt-2 text-sm">{test.systemPrompt}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="cursor-pointer"
+                onClick={() =>
+                  router.push(
+                    `/dashboard/new-test?systemPrompt=${encodeURIComponent(test.systemPrompt)}`,
+                  )
+                }
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                Copy Prompt To New Test
+              </Button>
+            </div>
           </CardHeader>
         </Card>
       </div>
