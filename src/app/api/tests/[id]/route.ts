@@ -1,7 +1,10 @@
+// External Dependencies
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+
+// Internal Dependencies
 import { db } from "@/server/db";
 import { tests } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
@@ -43,8 +46,6 @@ export async function GET(
         })),
       })),
     };
-
-    console.log("result is", result);
 
     return NextResponse.json(result);
   } catch (error) {
