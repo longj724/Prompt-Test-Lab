@@ -1,6 +1,12 @@
+// External Dependencies
 import { useMutation } from "@tanstack/react-query";
-import { type Message, generateMessagesSchema } from "@/lib/client-schemas";
 import { z } from "zod";
+
+// Internal Dependencies
+import {
+  type Message,
+  type generateMessagesSchema,
+} from "@/lib/client-schemas";
 
 const errorResponseSchema = z.object({
   error: z.string().optional(),

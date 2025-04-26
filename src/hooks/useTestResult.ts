@@ -1,6 +1,9 @@
+// External Dependencies
 import { useQuery } from "@tanstack/react-query";
-import { type TestResult, type testResultSchema } from "@/lib/client-schemas";
 import { type z } from "zod";
+
+// Internal Dependencies
+import { type TestResult, type testResultSchema } from "@/lib/client-schemas";
 
 export function useTestResult(testId: string) {
   return useQuery<TestResult>({

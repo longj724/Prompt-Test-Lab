@@ -84,17 +84,6 @@ export default function NewTestPage() {
   const generateMutation = useGenerateMessages();
   const router = useRouter();
 
-  const onPromptSubmit = async (data: PromptFormData) => {
-    try {
-      // TODO: Implement API call to save the prompt
-      console.log("Saving prompt:", data);
-      toast.success("Prompt saved successfully");
-    } catch (error) {
-      console.error("Failed to save prompt:", error);
-      toast.error("Failed to save prompt");
-    }
-  };
-
   const onGenerateSubmit = async (data: MessagesFormData) => {
     const systemPrompt = promptForm.getValues("systemPrompt");
     if (!systemPrompt) {
@@ -157,7 +146,7 @@ export default function NewTestPage() {
             </h1>
             <Form {...promptForm}>
               <form
-                onSubmit={promptForm.handleSubmit(onPromptSubmit)}
+                // onSubmit={promptForm.handleSubmit(onPromptSubmit)}
                 className="space-y-6"
               >
                 <FormField
