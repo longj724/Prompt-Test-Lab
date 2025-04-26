@@ -1,18 +1,20 @@
 "use client";
 
 // External Dependencies
-import { Plus, ChevronDown, Copy } from "lucide-react";
+import { Plus, Copy, Search } from "lucide-react";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 // Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
 import { useUpdateResponse } from "@/hooks/useUpdateResponse";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { modelApiNameToDisplayName } from "@/lib/client-schemas";
 
 const TestResultsPage = () => {
@@ -20,25 +22,11 @@ const TestResultsPage = () => {
   const { data: test, isLoading } = useTestResult(id as string);
   const updateResponse = useUpdateResponse();
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
+    null,
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-
-  // Initialize closedResponses with all message IDs to hide them by default
-  const [closedResponses, setClosedResponses] = useState<Set<string>>(() => {
-    if (!test) return new Set();
-    return new Set(test.messages.map((m) => m.id));
-  });
-
-  const toggleResponse = (messageId: string) => {
-    setClosedResponses((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(messageId)) {
-        newSet.delete(messageId);
-      } else {
-        newSet.add(messageId);
-      }
-      return newSet;
-    });
-  };
 
   if (isLoading) {
     return (
@@ -70,14 +58,32 @@ const TestResultsPage = () => {
     ),
   );
 
-  // const handleNotesChange = async (responseId: string, notes: string) => {
-  //   try {
-  //     await updateResponse.mutateAsync({ responseId, notes });
-  //     toast.success("Notes updated");
-  //   } catch (error) {
-  //     toast.error("Failed to update notes");
-  //   }
-  // };
+  // Set initial selected message if not set
+  if (!selectedMessageId && test?.messages.length > 0) {
+    setSelectedMessageId(test?.messages[0]?.id ?? null);
+  }
+
+  const selectedMessage = test?.messages.find(
+    (m) => m.id === selectedMessageId,
+  );
+  const selectedResult = selectedMessage?.results?.find(
+    (r) => r.model === (selectedModel ?? models[0]),
+  );
+
+  const filteredMessages = test.messages.filter((message) =>
+    message.content.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -109,103 +115,139 @@ const TestResultsPage = () => {
         </Card>
       </div>
 
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4">
-          <Tabs
-            defaultValue={models[0]}
-            className="flex-1"
-            onValueChange={setSelectedModel}
-          >
-            <div className="flex items-center justify-between">
-              <TabsList className="bg-muted text-muted-foreground h-9 p-1">
-                {models.map((model) => (
-                  <TabsTrigger
-                    key={model}
-                    value={model}
-                    className="ring-offset-background focus-visible:ring-ring data-[state=active]:bg-background data-[state=active]:text-foreground relative h-7 rounded-sm px-3 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow"
-                  >
-                    {modelApiNameToDisplayName[model]}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <Button size="sm" className="mb-2 cursor-pointer">
-                <Plus className="mr-2 h-4 w-4" />
-                Run Test With New Model
-              </Button>
+      <div className="mb-4">
+        <Tabs defaultValue={models[0]} onValueChange={setSelectedModel}>
+          <div className="flex items-center justify-between">
+            <TabsList className="bg-muted text-muted-foreground h-9 p-1">
+              {models.map((model) => (
+                <TabsTrigger
+                  key={model}
+                  value={model}
+                  className="ring-offset-background focus-visible:ring-ring data-[state=active]:bg-background data-[state=active]:text-foreground relative h-7 rounded-sm px-3 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow"
+                >
+                  {modelApiNameToDisplayName[model]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <Button size="sm" className="cursor-pointer">
+              <Plus className="mr-2 h-4 w-4" />
+              Run Test With New Model
+            </Button>
+          </div>
+        </Tabs>
+      </div>
+
+      {/* Messages and Responses Section */}
+      <div className="rounded-lg border">
+        <div className="flex items-center justify-between border-b px-6 py-4">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">
+              {test.messages.length}{" "}
+              {test.messages.length === 1 ? "message" : "messages"} tested
+            </span>
+          </div>
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
+            <span>Test run:</span>
+            <time>{new Date().toLocaleDateString()}</time>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-[350px_1fr]">
+          {/* Left Panel - Message List */}
+          <div className="border-r">
+            <div className="border-b p-4">
+              <div className="relative">
+                <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+                <Input
+                  placeholder="Search messages..."
+                  className="pl-9"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
+            <ScrollArea className="h-[600px]">
+              <div className="space-y-px">
+                {filteredMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={cn(
+                      "hover:bg-muted/50 cursor-pointer p-4 transition-colors",
+                      selectedMessageId === message.id && "bg-muted",
+                    )}
+                    onClick={() => setSelectedMessageId(message.id)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                        <span className="text-sm">U</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-sm">
+                          {message.content}
+                        </p>
+                        <time className="text-muted-foreground mt-1 block text-xs">
+                          {formatDate(message.createdAt)}
+                        </time>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
 
-            {models.map((model) => (
-              <TabsContent key={model} value={model} className="mt-6">
-                <div className="space-y-6">
-                  {test.messages.map((message) => {
-                    const result = message.results?.find(
-                      (r) => r.model === model,
-                    );
-                    if (!result) return null;
+          {/* Right Panel - Response Details */}
+          <div>
+            <ScrollArea className="h-[600px]">
+              {selectedMessage && (
+                <div className="space-y-6 p-6">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                      <span className="text-sm">U</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm">{selectedMessage.content}</p>
+                      <time className="text-muted-foreground mt-1 block text-xs">
+                        {formatDate(selectedMessage.createdAt)}
+                      </time>
+                    </div>
+                  </div>
 
-                    const isClosed = closedResponses.has(message.id);
-
-                    return (
-                      <Card key={`${message.id}-${model}`}>
-                        <CardContent className="pt-4">
-                          <div className="flex items-start space-x-3">
-                            <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
-                              <span className="text-sm">U</span>
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-0.5 text-sm font-medium">
-                                User Message
-                              </div>
-                              <p className="text-sm">{message.content}</p>
-                            </div>
-                          </div>
-
-                          <Collapsible
-                            open={!isClosed}
-                            onOpenChange={() => toggleResponse(message.id)}
-                          >
-                            <CollapsibleContent>
-                              <div className="mt-4 flex items-start space-x-3">
-                                <div className="bg-primary/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
-                                  <span className="text-primary text-sm">
-                                    AI
-                                  </span>
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <div className="mb-0.5 text-sm font-medium">
-                                    AI Response
-                                  </div>
-                                  <p className="text-sm whitespace-pre-wrap">
-                                    {result.response}
-                                  </p>
-                                </div>
-                              </div>
-                            </CollapsibleContent>
-
-                            <div className="mt-3 flex items-center justify-center border-t pt-3">
+                  {selectedResult && (
+                    <div>
+                      <div className="flex items-start gap-3">
+                        <div className="bg-primary/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                          <span className="text-primary text-sm">AI</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-2 flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                              {modelApiNameToDisplayName[selectedResult.model]}{" "}
+                              Response
+                            </span>
+                            <div className="flex gap-2">
                               <Button
-                                variant="ghost"
                                 size="sm"
                                 className="cursor-pointer gap-2"
-                                onClick={() => toggleResponse(message.id)}
                               >
-                                {isClosed ? "Show Response" : "Hide Response"}
-                                <ChevronDown
-                                  className={`h-4 w-4 transition-transform ${
-                                    !isClosed ? "rotate-180" : ""
-                                  }`}
-                                />
+                                <Copy className="h-4 w-4" />
+                                Copy Response
                               </Button>
                             </div>
-                          </Collapsible>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                          </div>
+                          <div className="prose prose-sm max-w-none">
+                            <p className="whitespace-pre-wrap">
+                              {selectedResult.response}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+              )}
+            </ScrollArea>
+          </div>
         </div>
       </div>
     </div>
