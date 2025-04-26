@@ -37,7 +37,7 @@ export const testResultSchema = z.object({
     z.object({
       id: z.string(),
       content: z.string(),
-      createdAt: z.coerce.date(),
+      createdAt: z.string(),
       included: z.boolean(),
       results: z
         .array(
