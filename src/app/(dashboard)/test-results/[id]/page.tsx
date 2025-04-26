@@ -1,14 +1,17 @@
 "use client";
 
+// External Dependencies
+import { Plus, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
+
+// Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
 import { useUpdateResponse } from "@/hooks/useUpdateResponse";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
-import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { modelApiNameToDisplayName } from "@/lib/client-schemas";
 
@@ -17,9 +20,12 @@ const TestResultsPage = () => {
   const { data: test, isLoading } = useTestResult(id as string);
   const updateResponse = useUpdateResponse();
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  const [closedResponses, setClosedResponses] = useState<Set<string>>(
-    new Set(),
-  );
+
+  // Initialize closedResponses with all message IDs to hide them by default
+  const [closedResponses, setClosedResponses] = useState<Set<string>>(() => {
+    if (!test) return new Set();
+    return new Set(test.messages.map((m) => m.id));
+  });
 
   const toggleResponse = (messageId: string) => {
     setClosedResponses((prev) => {
@@ -72,8 +78,6 @@ const TestResultsPage = () => {
   //   }
   // };
 
-  console.log("models", models);
-
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -95,23 +99,19 @@ const TestResultsPage = () => {
             className="flex-1"
             onValueChange={setSelectedModel}
           >
-            <div className="flex items-center justify-between border-b">
-              <TabsList className="h-10">
+            <div className="flex items-center justify-between">
+              <TabsList className="bg-muted text-muted-foreground h-9 p-1">
                 {models.map((model) => (
                   <TabsTrigger
                     key={model}
                     value={model}
-                    className="data-[state=active]:bg-background data-[state=active]:border-primary"
+                    className="ring-offset-background focus-visible:ring-ring data-[state=active]:bg-background data-[state=active]:text-foreground relative h-7 rounded-sm px-3 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow"
                   >
                     {modelApiNameToDisplayName[model]}
                   </TabsTrigger>
                 ))}
               </TabsList>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mb-2 cursor-pointer"
-              >
+              <Button size="sm" className="mb-2 cursor-pointer">
                 <Plus className="mr-2 h-4 w-4" />
                 Run Test With New Model
               </Button>

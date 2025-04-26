@@ -399,7 +399,7 @@ export default function NewTestPage() {
 
               {generateMutation.isPending ? (
                 <Card>
-                  <CardContent className="p-2">
+                  <CardContent className="p-4">
                     <div className="flex animate-pulse space-x-4">
                       <div className="flex-1 space-y-4 py-1">
                         <div className="bg-muted h-4 w-3/4 rounded"></div>
@@ -414,7 +414,7 @@ export default function NewTestPage() {
               ) : messages.length > 0 ? (
                 messages.map((message) => (
                   <Card key={message.id}>
-                    <CardContent className="p-4">
+                    <CardContent className="px-4 py-2">
                       <div className="flex justify-between gap-4">
                         <div className="flex-1">
                           {editingId === message.id ? (
