@@ -1,11 +1,12 @@
+// External Dependencies
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import OpenAI from "openai";
+
+// Internal Dependencies
 import { db } from "@/server/db";
 import { messages, responses, tests } from "@/server/db/schema";
-import OpenAI from "openai";
 import { messageSchema } from "@/lib/client-schemas";
-import { type Model } from "@/server/db/schema";
-import { count } from "drizzle-orm";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -14,14 +15,9 @@ const openai = new OpenAI({
 const createTestSchema = z.object({
   name: z.string().min(1),
   systemPrompt: z.string().min(1),
-  model: z.enum(["gpt-4o-mini", "gpt-4.1-nano"]),
+  model: z.string(),
   messages: z.array(messageSchema),
 });
-
-const modelDisplayNameToApiName: Record<string, Model> = {
-  "gpt-4o-mini": "gpt-4o-mini-2024-07-18",
-  "gpt-4.1-nano": "gpt-4.1-nano-2025-04-14",
-};
 
 export async function GET() {
   try {
@@ -66,7 +62,7 @@ export async function POST(request: Request) {
       .values({
         name,
         systemPrompt,
-        model: modelDisplayNameToApiName[model] as string,
+        model,
       })
       .returning();
 
@@ -90,7 +86,7 @@ export async function POST(request: Request) {
 
     const responsePromises = createdMessages.map(async (message) => {
       const result = await openai.chat.completions.create({
-        model: modelDisplayNameToApiName[model] as string,
+        model: model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: message.content },
@@ -102,7 +98,7 @@ export async function POST(request: Request) {
 
       return db.insert(responses).values({
         messageId: message.id,
-        model: modelDisplayNameToApiName[model]!,
+        model,
         content: response,
       });
     });

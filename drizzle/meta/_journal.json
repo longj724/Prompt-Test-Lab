@@ -22,6 +22,13 @@
       "when": 1745553309802,
       "tag": "0002_mean_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745627344459,
+      "tag": "0003_chunky_exiles",
+      "breakpoints": true
     }
   ]
 }

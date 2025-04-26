@@ -1,0 +1,1 @@
+ALTER TABLE "responses" ALTER COLUMN "model" SET DATA TYPE text;

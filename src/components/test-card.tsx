@@ -36,7 +36,7 @@ export function TestCard({
   return (
     <Card
       className="hover:bg-muted/50 transition-colors hover:cursor-pointer"
-      onClick={() => router.push(`/dashboard/test-results/${id}`)}
+      onClick={() => router.push(`/test-results/${id}`)}
     >
       <CardHeader>
         <div className="flex items-start justify-between">

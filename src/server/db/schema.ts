@@ -87,7 +87,7 @@ export const responses = pgTable("responses", {
   messageId: text("message_id")
     .references(() => messages.id, { onDelete: "cascade" })
     .notNull(),
-  model: modelEnum("model").notNull(),
+  model: text("model").notNull(),
   content: text("content").notNull(),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -6,16 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronDown } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { modelApiNameToDisplayName } from "@/lib/client-schemas";
 
 const TestResultsPage = () => {
@@ -78,6 +72,8 @@ const TestResultsPage = () => {
   //   }
   // };
 
+  console.log("models", models);
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -111,7 +107,11 @@ const TestResultsPage = () => {
                   </TabsTrigger>
                 ))}
               </TabsList>
-              <Button variant="outline" size="sm" className="mb-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mb-2 cursor-pointer"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Run Test With New Model
               </Button>

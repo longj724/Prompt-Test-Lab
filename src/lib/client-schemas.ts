@@ -11,6 +11,7 @@ export type Message = z.infer<typeof messageSchema>;
 export const generateMessagesSchema = z.object({
   count: z.number().min(1).max(10),
   systemPrompt: z.string().min(1, "System prompt is required"),
+  model: z.string().optional(),
 });
 
 export const generateApiResponseSchema = z.object({
@@ -56,6 +57,40 @@ export const testResultSchema = z.object({
 export type TestResult = z.infer<typeof testResultSchema>;
 
 export const modelApiNameToDisplayName: Record<string, string> = {
-  "gpt-4o-mini-2024-07-18": "GPT-4o-mini",
-  "gpt-4.1-nano-2025-04-14": "GPT-4.1-nano",
+  "gpt-4o-mini-2024-07-18": "GPT-4o mini",
+  "gpt-4.1-nano-2025-04-14": "GPT-4.1 nano",
+  "gpt-4o-2024-08-06": "GPT-4o",
+  "o4-mini-2025-04-16": "o4-mini",
+  "gpt-4.1-2025-04-14": "GPT-4.1",
+  "o3-2025-04-16": "o3",
+  "claude-3-7-sonnet-latest": "Claude 3.7 Sonnet",
+  "claude-3-5-sonnet-latest": "Claude 3.5 Sonnet",
+  "claude-3-5-haiku-latest": "Claude 3.5 Haiku",
+  "claude-3-opus-latest": "Claude 3 Opus",
 };
+
+export const modelDisplayNames = [
+  "GPT-4o mini",
+  "GPT-4.1 nano",
+  "GPT-4o",
+  "o4-mini",
+  "GPT-4.1",
+  "o3",
+  "Claude 3.7 Sonnet",
+  "Claude 3.5 Sonnet",
+  "Claude 3.5 Haiku",
+  "Claude 3 Opus",
+];
+
+export const modelApiNames = [
+  "gpt-4o-mini-2024-07-18",
+  "gpt-4.1-nano-2025-04-14",
+  "gpt-4o-2024-08-06",
+  "o4-mini-2025-04-16",
+  "gpt-4.1-2025-04-14",
+  "o3-2025-04-16",
+  "claude-3-7-sonnet-latest",
+  "claude-3-5-sonnet-latest",
+  "claude-3-5-haiku-latest",
+  "claude-3-opus-latest",
+];

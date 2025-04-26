@@ -31,7 +31,9 @@ import { useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -62,7 +64,7 @@ export default function NewTestPage() {
     defaultValues: {
       name: initialName,
       systemPrompt: initialSystemPrompt,
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini-2024-07-18",
     },
   });
 
@@ -142,7 +144,6 @@ export default function NewTestPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="grid grid-cols-2 gap-8">
-        {/* Left Column - System Prompt */}
         <div className="border-r pr-8">
           <div>
             <h1 className="mb-8 text-2xl font-semibold">
@@ -200,12 +201,40 @@ export default function NewTestPage() {
                           <SelectValue placeholder="Select a model" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="gpt-4.1-nano">
-                            OpenAI GPT-4.1-nano
-                          </SelectItem>
-                          <SelectItem value="gpt-4o-mini">
-                            OpenAI GPT-4o-mini
-                          </SelectItem>
+                          <SelectGroup>
+                            <SelectLabel>OpenAI</SelectLabel>
+                            <SelectItem value="gpt-4.1-nano-2025-04-14">
+                              GPT-4.1-nano
+                            </SelectItem>
+                            <SelectItem value="gpt-4o-mini-2024-07-18">
+                              GPT-4o-mini
+                            </SelectItem>
+                            <SelectItem value="gpt-4o-2024-08-06">
+                              GPT-4o
+                            </SelectItem>
+                            <SelectItem value="gpt-4.1-2025-04-14">
+                              GPT-4.1
+                            </SelectItem>
+                            <SelectItem value="o3-2025-04-16">o3</SelectItem>
+                            <SelectItem value="o4-mini-2025-04-16">
+                              o4-mini
+                            </SelectItem>
+                          </SelectGroup>
+                          <SelectGroup>
+                            <SelectLabel>Anthropic</SelectLabel>
+                            <SelectItem value="claude-3-7-sonnet-latest">
+                              Claude 3.7 Sonnet
+                            </SelectItem>
+                            <SelectItem value="claude-3-5-sonnet-latest">
+                              Claude 3.5 Sonnet
+                            </SelectItem>
+                            <SelectItem value="claude-3-5-haiku-latest">
+                              Claude 3.5 Haiku
+                            </SelectItem>
+                            <SelectItem value="claude-3-opus-latest">
+                              Claude 3 Opus
+                            </SelectItem>
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -370,7 +399,7 @@ export default function NewTestPage() {
 
               {generateMutation.isPending ? (
                 <Card>
-                  <CardContent className="p-4">
+                  <CardContent className="p-2">
                     <div className="flex animate-pulse space-x-4">
                       <div className="flex-1 space-y-4 py-1">
                         <div className="bg-muted h-4 w-3/4 rounded"></div>
