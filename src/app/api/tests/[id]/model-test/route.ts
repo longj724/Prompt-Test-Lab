@@ -2,29 +2,35 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import OpenAI from "openai";
-import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
+import { eq } from "drizzle-orm";
+import { generateText } from "ai";
 
 // Internal Dependencies
 import { db } from "@/server/db";
-import { messages, modelTests, responses, tests } from "@/server/db/schema";
-import { messageSchema } from "@/lib/client-schemas";
+import { modelTests, messages, responses, tests } from "@/server/db/schema";
 import { modelToProviderMap } from "@/lib/utils";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-const createTestSchema = z.object({
-  name: z.string().min(1),
-  systemPrompt: z.string().min(1),
+const createModelTestSchema = z.object({
   model: z.string(),
-  messages: z.array(messageSchema),
 });
 
-export async function GET() {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
-    const allTests = await db.query.tests.findMany({
+    const { id } = await params;
+    const body = (await request.json()) as unknown;
+
+    const { model } = createModelTestSchema.parse(body);
+
+    const test = await db.query.tests.findFirst({
+      where: eq(tests.id, id),
       with: {
         modelTests: {
           with: {
@@ -32,54 +38,10 @@ export async function GET() {
           },
         },
       },
-      orderBy: (tests, { desc }) => [desc(tests.createdAt)],
     });
 
-    const formattedTests = allTests.map((test) => ({
-      id: test.id,
-      name: test.name,
-      systemPrompt: test.systemPrompt,
-      createdAt: test.createdAt,
-      messageCount: test.modelTests.reduce(
-        (acc, mt) => acc + mt.messages.length,
-        0,
-      ),
-    }));
-
-    return NextResponse.json(formattedTests);
-  } catch (error) {
-    console.error("Error fetching tests:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch tests" },
-      { status: 500 },
-    );
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = (await request.json()) as z.infer<typeof createTestSchema>;
-
-    const {
-      name,
-      systemPrompt,
-      model,
-      messages: testMessages,
-    } = createTestSchema.parse(body);
-
-    const [test] = await db
-      .insert(tests)
-      .values({
-        name,
-        systemPrompt,
-      })
-      .returning();
-
     if (!test) {
-      return NextResponse.json(
-        { error: "Failed to create test" },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: "Test not found" }, { status: 404 });
     }
 
     const [modelTest] = await db
@@ -97,10 +59,12 @@ export async function POST(request: Request) {
       );
     }
 
+    const sourceMessages = test.modelTests[0]?.messages ?? [];
+
     const createdMessages = await db
       .insert(messages)
       .values(
-        testMessages.map((msg) => ({
+        sourceMessages.map((msg) => ({
           modelTestId: modelTest.id,
           content: msg.content,
           included: msg.included,
@@ -116,7 +80,7 @@ export async function POST(request: Request) {
         const result = await openai.chat.completions.create({
           model: model,
           messages: [
-            { role: "system", content: systemPrompt },
+            { role: "system", content: test.systemPrompt },
             { role: "user", content: message.content },
           ],
         });
@@ -135,7 +99,7 @@ export async function POST(request: Request) {
         const { text } = await generateText({
           model: anthropic(model),
           prompt: message.content,
-          system: systemPrompt,
+          system: test.systemPrompt,
         });
 
         return db.insert(responses).values({
@@ -148,9 +112,9 @@ export async function POST(request: Request) {
       await Promise.all(responsePromises);
     }
 
-    return NextResponse.json({ id: test.id });
+    return NextResponse.json({ id: modelTest.id });
   } catch (error) {
-    console.error("Error creating test:", error);
+    console.error("Error creating model test:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request format", details: error.errors },
@@ -158,7 +122,7 @@ export async function POST(request: Request) {
       );
     }
     return NextResponse.json(
-      { error: "Failed to create test" },
+      { error: "Failed to create model test" },
       { status: 500 },
     );
   }

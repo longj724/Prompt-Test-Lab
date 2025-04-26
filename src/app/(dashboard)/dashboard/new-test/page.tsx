@@ -237,8 +237,8 @@ export default function NewTestPage() {
                             <SelectItem value="claude-3-5-haiku-latest">
                               Claude 3.5 Haiku
                             </SelectItem>
-                            <SelectItem value="claude-3-opus-latest">
-                              Claude 3 Opus
+                            <SelectItem value="claude-3-5-opus-latest">
+                              Claude 3.5 Opus
                             </SelectItem>
                           </SelectGroup>
                         </SelectContent>

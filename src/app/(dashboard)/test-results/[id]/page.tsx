@@ -4,6 +4,7 @@
 import { Plus, Copy, Search } from "lucide-react";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
@@ -15,8 +16,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { modelApiNameToDisplayName } from "@/lib/client-schemas";
-import { toast } from "sonner";
+import { NewModelTestDialog } from "@/components/new-model-test-dialog";
+import { modelApiNameToDisplayName } from "@/lib/utils";
 
 const TestResultsPage = () => {
   const { id } = useParams();
@@ -148,10 +149,12 @@ const TestResultsPage = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Button size="sm" className="cursor-pointer">
-              <Plus className="mr-2 h-4 w-4" />
-              Run Test With New Model
-            </Button>
+            <NewModelTestDialog testId={test.id}>
+              <Button size="sm" className="cursor-pointer">
+                <Plus className="mr-2 h-4 w-4" />
+                Run Test With New Model
+              </Button>
+            </NewModelTestDialog>
           </div>
         </Tabs>
       </div>
