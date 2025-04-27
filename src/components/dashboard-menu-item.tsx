@@ -17,7 +17,7 @@ export function DashboardMenuItem() {
     <SidebarMenuItem>
       <SidebarMenuButton
         asChild
-        className={cn(isDashboardRoute && "active")}
+        className={cn(isDashboardRoute && "active", "hover:bg-[#4f46e5]")}
         tooltip="Dashboard"
       >
         <Link href="/dashboard" className="flex items-center gap-2">

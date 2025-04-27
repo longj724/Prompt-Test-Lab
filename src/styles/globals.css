@@ -94,7 +94,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: #1f2937;
   --sidebar-foreground: #ffffff;
-  --sidebar-hover: #374151;
+  --sidebar-hover: #4f46e5;
   --sidebar-border: #374151;
   --primary: #6366f1;
   --primary-hover: #4f46e5;
@@ -131,6 +131,7 @@
   --sidebar-accent-foreground: #f9fafb;
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #6366f1;
+  --sidebar-hover: #4f46e5;
 }
 
 @layer base {

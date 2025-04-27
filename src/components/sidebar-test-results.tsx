@@ -1,9 +1,11 @@
 "use client";
 
+// External Dependencies
 import { ChevronRight, TestTubesIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
+// Internal Dependencies
 import {
   Collapsible,
   CollapsibleContent,
@@ -72,6 +74,7 @@ export function SidebarTestResults() {
                     className={cn(
                       "transition-colors",
                       test.id === currentTestId && "active",
+                      "hover:bg-[#4f46e5]",
                     )}
                   >
                     <Link
