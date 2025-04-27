@@ -16,7 +16,6 @@ import { Textarea } from "@/components/ui/textarea";
 
 // Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
-import { useUpdateResponse } from "@/hooks/useUpdateResponse";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,7 +30,6 @@ import { useAddMessage } from "@/hooks/useAddMessage";
 const TestResultsPage = () => {
   const { id } = useParams();
   const { data: test, isLoading } = useTestResult(id as string);
-  const updateResponse = useUpdateResponse();
   const [selectedModelTestId, setSelectedModelTestId] = useState<string | null>(
     null,
   );

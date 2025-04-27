@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+// External Dependencies
+import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
+
+// Internal Dependencies
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -23,7 +21,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { signOut } from "next-auth/react";
 
 interface NavUserProps {
   name: string;

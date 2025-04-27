@@ -1,3 +1,4 @@
+// External Dependencies
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface AddMessageVariables {
