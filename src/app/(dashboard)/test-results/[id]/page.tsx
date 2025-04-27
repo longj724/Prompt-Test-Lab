@@ -5,6 +5,14 @@ import { Plus, Copy, Search } from "lucide-react";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 // Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
@@ -18,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { NewModelTestDialog } from "@/components/new-model-test-dialog";
 import { modelApiNameToDisplayName } from "@/lib/utils";
+import { useAddMessage } from "@/hooks/useAddMessage";
 
 const TestResultsPage = () => {
   const { id } = useParams();
@@ -31,6 +40,9 @@ const TestResultsPage = () => {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const [isAddingMessage, setIsAddingMessage] = useState(false);
+  const [newMessage, setNewMessage] = useState("");
+  const addMessage = useAddMessage();
 
   if (isLoading) {
     return (
@@ -102,6 +114,22 @@ const TestResultsPage = () => {
     }
   };
 
+  const handleAddMessage = async () => {
+    if (!selectedModelTestId || !newMessage.trim()) return;
+
+    try {
+      await addMessage.mutateAsync({
+        modelTestId: selectedModelTestId,
+        content: newMessage.trim(),
+      });
+      setNewMessage("");
+      setIsAddingMessage(false);
+      toast.success("Message tested successfully");
+    } catch (error) {
+      toast.error("Failed to add message");
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -149,12 +177,44 @@ const TestResultsPage = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <NewModelTestDialog testId={test.id}>
-              <Button size="sm" className="cursor-pointer">
-                <Plus className="mr-2 h-4 w-4" />
-                Run Test With New Model
-              </Button>
-            </NewModelTestDialog>
+            <div className="flex gap-2">
+              <Dialog open={isAddingMessage} onOpenChange={setIsAddingMessage}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="cursor-pointer">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Test Message
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Message to Test</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <Textarea
+                      placeholder="Enter your message..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      className="min-h-[100px]"
+                    />
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={handleAddMessage}
+                        disabled={!newMessage.trim() || addMessage.isPending}
+                        className="cursor-pointer"
+                      >
+                        {addMessage.isPending ? "Testing..." : "Test Message"}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <NewModelTestDialog testId={test.id}>
+                <Button size="sm" className="cursor-pointer">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Run Test With New Model
+                </Button>
+              </NewModelTestDialog>
+            </div>
           </div>
         </Tabs>
       </div>
@@ -171,14 +231,14 @@ const TestResultsPage = () => {
               tested
             </span>
           </div>
-          <div className="text-muted-foreground flex items-center gap-2 text-sm">
+          {/* <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <span>Test run:</span>
             <time>
               {selectedModelTest?.createdAt
                 ? formatDate(selectedModelTest.createdAt)
                 : "-"}
             </time>
-          </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-[350px_1fr]">
