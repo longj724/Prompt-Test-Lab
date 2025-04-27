@@ -10,6 +10,7 @@ import { generateText } from "ai";
 import { db } from "@/server/db";
 import { modelTests, messages, responses, tests } from "@/server/db/schema";
 import { modelToProviderMap } from "@/lib/utils";
+import { requireAuth } from "@/lib/requireAuth";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -24,6 +25,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    await requireAuth();
+
     const { id } = await params;
     const body = (await request.json()) as unknown;
 

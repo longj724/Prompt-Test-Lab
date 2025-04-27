@@ -1,8 +1,12 @@
+// External Dependencies
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { eq } from "drizzle-orm";
+
+// Internal Dependencies
+import { requireAuth } from "@/lib/requireAuth";
 import { db } from "@/server/db";
 import { responses } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
 
 const updateResponseSchema = z.object({
   responseId: z.string(),
@@ -12,6 +16,8 @@ const updateResponseSchema = z.object({
 
 export async function PATCH(request: Request) {
   try {
+    await requireAuth();
+
     const body = (await request.json()) as z.infer<typeof updateResponseSchema>;
     const { responseId, rating, notes } = updateResponseSchema.parse(body);
 

@@ -5,12 +5,15 @@ import { NextResponse } from "next/server";
 // Internal Dependencies
 import { db } from "@/server/db";
 import { tests } from "@/server/db/schema";
+import { requireAuth } from "@/lib/requireAuth";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    await requireAuth();
+
     const { id } = await params;
 
     const test = await db.query.tests.findFirst({

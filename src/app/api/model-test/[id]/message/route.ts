@@ -10,6 +10,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { modelToProviderMap } from "@/lib/utils";
 import { db } from "@/server/db";
 import { modelTests, messages, responses } from "@/server/db/schema";
+import { requireAuth } from "@/lib/requireAuth";
 
 const messageSchema = z.object({
   content: z.string().min(1),
@@ -24,6 +25,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    await requireAuth();
+
     const { id } = await params;
     const body = (await request.json()) as z.infer<typeof messageSchema>;
     const { content } = messageSchema.parse(body);
@@ -46,7 +49,7 @@ export async function POST(
       .insert(messages)
       .values({
         content,
-        modelTestId: params.id,
+        modelTestId: modelTest.id,
       })
       .returning();
 

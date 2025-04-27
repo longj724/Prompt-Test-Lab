@@ -8,6 +8,7 @@ import {
   generateMessagesSchema,
   generateApiResponseSchema,
 } from "@/lib/client-schemas";
+import { requireAuth } from "@/lib/requireAuth";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -15,6 +16,8 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
+    await requireAuth();
+
     const body = (await request.json()) as z.infer<
       typeof generateMessagesSchema
     >;
