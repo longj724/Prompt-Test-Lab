@@ -1,20 +1,18 @@
 // External Dependencies
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import OpenAI from "openai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { eq } from "drizzle-orm";
 import { generateText } from "ai";
+import { type LanguageModelV1 } from "@ai-sdk/provider";
+import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 
 // Internal Dependencies
 import { db } from "@/server/db";
 import { modelTests, messages, responses, tests } from "@/server/db/schema";
 import { modelToProviderMap } from "@/lib/utils";
 import { requireAuth } from "@/lib/requireAuth";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
 
 const createModelTestSchema = z.object({
   model: z.string(),
@@ -78,42 +76,34 @@ export async function POST(
     const provider =
       modelToProviderMap[model as keyof typeof modelToProviderMap];
 
-    if (provider === "openai") {
-      const responsePromises = createdMessages.map(async (message) => {
-        const result = await openai.chat.completions.create({
-          model: model,
-          messages: [
-            { role: "system", content: test.systemPrompt },
-            { role: "user", content: message.content },
-          ],
-        });
-        const response = result.choices[0]?.message?.content ?? "";
-
-        return db.insert(responses).values({
-          messageId: message.id,
-          model,
-          content: response,
-        });
-      });
-
-      await Promise.all(responsePromises);
-    } else if (provider === "anthropic") {
-      const responsePromises = createdMessages.map(async (message) => {
-        const { text } = await generateText({
-          model: anthropic(model),
-          prompt: message.content,
-          system: test.systemPrompt,
-        });
-
-        return db.insert(responses).values({
-          messageId: message.id,
-          model,
-          content: text,
-        });
-      });
-
-      await Promise.all(responsePromises);
+    let modelProvider: LanguageModelV1;
+    switch (provider) {
+      case "openai":
+        modelProvider = openai(model);
+        break;
+      case "anthropic":
+        modelProvider = anthropic(model);
+        break;
+      case "google":
+        modelProvider = google(model);
+        break;
     }
+
+    const responsePromises = createdMessages.map(async (message) => {
+      const { text } = await generateText({
+        model: modelProvider,
+        prompt: message.content,
+        system: test.systemPrompt,
+      });
+
+      return db.insert(responses).values({
+        messageId: message.id,
+        model,
+        content: text,
+      });
+    });
+
+    await Promise.all(responsePromises);
 
     return NextResponse.json({ id: modelTest.id });
   } catch (error) {

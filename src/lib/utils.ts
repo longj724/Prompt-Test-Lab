@@ -17,6 +17,10 @@ export const modelToProviderMap = {
   "claude-3-5-sonnet-latest": "anthropic",
   "claude-3-5-haiku-latest": "anthropic",
   "claude-3-opus-latest": "anthropic",
+  "gemini-2.0-flash-latest": "google",
+  "gemini-2.0-flash-lite-latest": "google",
+  "gemini-1.5-flash-latest": "google",
+  "gemini-1.5-pro-latest": "google",
 };
 
 export const modelApiNameToDisplayName: Record<string, string> = {
@@ -30,4 +34,8 @@ export const modelApiNameToDisplayName: Record<string, string> = {
   "claude-3-5-sonnet-latest": "Claude 3.5 Sonnet",
   "claude-3-5-haiku-latest": "Claude 3.5 Haiku",
   "claude-3-opus-latest": "Claude 3.5 Opus",
+  "gemini-2.0-flash-latest": "Gemini 2.0 Flash",
+  "gemini-2.0-flash-lite-latest": "Gemini 2.0 Flash Lite",
+  "gemini-1.5-flash-latest": "Gemini 1.5 Flash",
+  "gemini-1.5-pro-latest": "Gemini 1.5 Pro",
 };

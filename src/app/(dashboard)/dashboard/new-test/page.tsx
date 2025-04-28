@@ -230,6 +230,21 @@ export default function NewTestPage() {
                               Claude 3.5 Opus
                             </SelectItem>
                           </SelectGroup>
+                          <SelectGroup>
+                            <SelectLabel>Google</SelectLabel>
+                            <SelectItem value="gemini-1.5-pro-latest">
+                              Gemini 1.5 Pro
+                            </SelectItem>
+                            <SelectItem value="gemini-1.5-flash-latest">
+                              Gemini 1.5 Flash
+                            </SelectItem>
+                            <SelectItem value="gemini-2.0-flash-latest">
+                              Gemini 2.0 Flash
+                            </SelectItem>
+                            <SelectItem value="gemini-2.0-flash-lite-latest">
+                              Gemini 2.0 Flash Lite
+                            </SelectItem>
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       <FormMessage />
