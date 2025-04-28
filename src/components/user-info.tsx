@@ -1,7 +1,7 @@
 "use client";
 
 // External Dependencies
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, Key, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 // Internal Dependencies
@@ -21,6 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { ApiKeysDialog } from "./api-keys-dialog";
 
 interface NavUserProps {
   name: string;
@@ -79,22 +80,18 @@ export function NavUser({ name, email, image }: NavUserProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup> */}
-            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuGroup>
-              <DropdownMenuItem className="hover:cursor-pointer">
-                <BadgeCheck className="hover:text-white" />
-                Account
-              </DropdownMenuItem>
-              {/* <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem> */}
+              <ApiKeysDialog
+                trigger={
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    className="hover:cursor-pointer"
+                  >
+                    <Key className="hover:text-white" />
+                    API Keys
+                  </DropdownMenuItem>
+                }
+              />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem

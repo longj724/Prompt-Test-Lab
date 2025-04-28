@@ -104,6 +104,19 @@ export const responses = pgTable("responses", {
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
 
+export const apiKeys = pgTable("api_keys", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  encryptedOpenAIKey: text("encrypted_openai_key"),
+  encryptedAnthropicKey: text("encrypted_anthropic_key"),
+  encryptedGoogleKey: text("encrypted_google_key"),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+});
+
 export const testsRelations = relations(tests, ({ many }) => ({
   modelTests: many(modelTests),
 }));
@@ -131,10 +144,18 @@ export const responsesRelations = relations(responses, ({ one }) => ({
   }),
 }));
 
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}));
+
 export const schema = {
   users,
   sessions,
   accounts,
+  apiKeys,
   tests,
   modelTests,
   messages,

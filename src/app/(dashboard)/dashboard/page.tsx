@@ -2,7 +2,7 @@
 
 // External Dependencies
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 // Internal Dependencies
@@ -17,9 +17,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { TestCard } from "@/components/test-card";
 import { useTests } from "@/hooks/use-tests";
+import { useApiKeys } from "@/hooks/use-api-keys";
+import { ApiKeysDialog } from "@/components/api-keys-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function DashboardPage() {
   const { data: tests, isLoading, error } = useTests();
+  const { data: apiKeys } = useApiKeys();
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<
     "newest" | "oldest" | "name-asc" | "name-desc"
@@ -63,10 +67,39 @@ export default function DashboardPage() {
               Manage and view all your prompt tests
             </p>
           </div>
-          <Button asChild size="lg">
-            <Link href="/dashboard/new-test">+ New Test</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            {apiKeys?.key && <ApiKeysDialog />}
+            <Button asChild size="lg" className="hover:cursor-pointer">
+              <Link href="/dashboard/new-test">+ New Test</Link>
+            </Button>
+          </div>
         </div>
+
+        {!apiKeys?.key && (
+          <Alert className="mt-6 border-blue-500 bg-blue-50 text-blue-900 dark:border-blue-500/30 dark:bg-blue-900/30 dark:text-blue-300 [&>svg]:text-blue-500 dark:[&>svg]:text-blue-400">
+            <AlertTriangle className="h-5 w-5" />
+            <AlertTitle className="text-blue-900 dark:text-blue-300">
+              No API Keys Found
+            </AlertTitle>
+            <AlertDescription className="mt-2 flex items-center justify-between [&>span]:text-blue-800 dark:[&>span]:text-blue-300">
+              <span>
+                You need to add API keys before you can start testing with
+                different providers.
+              </span>
+              <ApiKeysDialog
+                trigger={
+                  <Button
+                    // variant="outline"
+                    size="sm"
+                    className="ml-4 border-blue-500 whitespace-nowrap hover:cursor-pointer dark:border-blue-400"
+                  >
+                    Add Keys
+                  </Button>
+                }
+              />
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="mt-6 flex items-center justify-between gap-4">
           <div className="relative flex-1">

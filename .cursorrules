@@ -9,3 +9,4 @@ You are an expert Next.js developer.
 - Use zod for schema validation for all api endpoints.
 - When you are creating a button make sure the cursor is a pointer when hovering over it.
 - Just use OpenAI models for the testing now
+- When you create a button make sure the cursor is a pointer when hovering over it.

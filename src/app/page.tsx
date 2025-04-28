@@ -1,7 +1,6 @@
 // External Dependencies
 import Link from "next/link";
 import Image from "next/image";
-
 // Relative Dependencies
 import { Button } from "@/components/ui/button";
 
@@ -12,18 +11,16 @@ export default async function HomePage() {
       <nav className="border-b">
         <div className="container mx-auto flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="PromptTestLab Logo"
-              width={32}
-              height={32}
-              className="rounded-full"
+            <img
+              src="/prompt-test-lab-icon.svg"
+              alt="Prompt Test Lab Logo"
+              className="h-8 w-8"
             />
             <span className="text-xl font-bold">Prompt Test Lab</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/features">Features</Link>
-            <Link href="/pricing">Pricing</Link>
+            {/* <Link href="/features">Features</Link> */}
+            {/* <Link href="/pricing">Pricing</Link> */}
             <Link href="/sign-in">
               <Button
                 variant="outline"
@@ -44,7 +41,7 @@ export default async function HomePage() {
         <section className="container mx-auto grid min-h-[600px] grid-cols-2 items-center gap-8 py-16">
           <div className="space-y-8">
             <h1 className="text-5xl leading-tight font-bold tracking-tighter">
-              Test & Optimize Your AI Prompts at Scale
+              Test & Optimize Your AI Prompts
             </h1>
             <p className="text-muted-foreground text-xl">
               Streamline your prompt engineering workflow with automated
@@ -100,8 +97,8 @@ export default async function HomePage() {
               </div>
               <h3 className="text-xl font-semibold">Automated Testing</h3>
               <p className="text-muted-foreground">
-                Generate and test thousands of potential user interactions based
-                on your system prompt.
+                Generate and test potential user interactions based on your
+                system prompt.
               </p>
             </div>
             <div className="space-y-4">
@@ -120,7 +117,7 @@ export default async function HomePage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold">Response Analytics</h3>
+              <h3 className="text-xl font-semibold">Response Comparisons</h3>
               <p className="text-muted-foreground">
                 Compare and analyze responses across different prompt
                 variations.
@@ -150,11 +147,8 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Pricing Section */}
         <section className="container mx-auto py-24">
-          <h2 className="text-center text-3xl font-bold">
-            Simple, Transparent Pricing
-          </h2>
+          <h2 className="text-center text-3xl font-bold">Pricing</h2>
           <div className="mt-16 grid grid-cols-3 gap-8">
             <div className="rounded-xl border p-8">
               <h3 className="text-xl font-semibold">Basic</h3>
@@ -353,18 +347,18 @@ export default async function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-blue-600 py-24">
+        <section className="bg-[#6366f1] py-24">
           <div className="container mx-auto text-center text-white">
             <h2 className="text-3xl font-bold">
               Ready to Optimize Your AI Prompts?
             </h2>
             <p className="mt-4 text-lg">
-              Join thousands of developers and AI engineers who are already
-              using PromptTestLab to build better AI systems.
+              Join other engineers who are already using Prompt Test Lab to
+              build better AI systems.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Button size="lg" variant="secondary" className="cursor-pointer">
-                Start Free Trial
+                Start For Free
               </Button>
             </div>
           </div>
