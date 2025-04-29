@@ -29,6 +29,11 @@ export default function DashboardPage() {
     "newest" | "oldest" | "name-asc" | "name-desc"
   >("newest");
 
+  const hasKeys =
+    apiKeys?.keys.encryptedOpenAIKey ??
+    apiKeys?.keys.encryptedAnthropicKey ??
+    apiKeys?.keys.encryptedGoogleKey;
+
   const filteredAndSortedTests =
     tests
       ?.filter(
@@ -68,14 +73,14 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {apiKeys?.key && <ApiKeysDialog />}
+            {hasKeys && <ApiKeysDialog />}
             <Button asChild size="lg" className="hover:cursor-pointer">
               <Link href="/dashboard/new-test">+ New Test</Link>
             </Button>
           </div>
         </div>
 
-        {!apiKeys?.key && (
+        {!hasKeys && (
           <Alert className="mt-6 border-blue-500 bg-blue-50 text-blue-900 dark:border-blue-500/30 dark:bg-blue-900/30 dark:text-blue-300 [&>svg]:text-blue-500 dark:[&>svg]:text-blue-400">
             <AlertTriangle className="h-5 w-5" />
             <AlertTitle className="text-blue-900 dark:text-blue-300">

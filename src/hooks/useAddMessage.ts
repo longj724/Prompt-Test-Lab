@@ -26,8 +26,7 @@ export function useAddMessage() {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      // Invalidate the test result query to refetch with new message
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ["test-result", variables.modelTestId],
       });
     },

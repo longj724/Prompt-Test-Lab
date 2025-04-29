@@ -76,16 +76,15 @@ export function ApiKeysDialog({ trigger }: ApiKeysDialogProps) {
     setShowKeys((prev) => ({ ...prev, [provider]: !prev[provider] }));
   };
 
-  // Helper function to get the key for a provider
   const getProviderKey = (provider: string) => {
-    if (!apiKeys?.key) return null;
+    if (!apiKeys?.keys) return null;
     switch (provider) {
       case "openai":
-        return apiKeys.key.encryptedOpenAIKey;
+        return apiKeys.keys.encryptedOpenAIKey;
       case "anthropic":
-        return apiKeys.key.encryptedAnthropicKey;
+        return apiKeys.keys.encryptedAnthropicKey;
       case "google":
-        return apiKeys.key.encryptedGoogleKey;
+        return apiKeys.keys.encryptedGoogleKey;
       default:
         return null;
     }
@@ -118,7 +117,7 @@ export function ApiKeysDialog({ trigger }: ApiKeysDialogProps) {
             <h4 className="text-sm font-medium">Your API Keys</h4>
             {isLoading ? (
               <p className="text-muted-foreground text-sm">Loading...</p>
-            ) : !apiKeys?.key ? (
+            ) : !apiKeys?.keys ? (
               <p className="text-muted-foreground text-sm">No API keys added</p>
             ) : (
               <div className="space-y-2">
@@ -131,13 +130,13 @@ export function ApiKeysDialog({ trigger }: ApiKeysDialogProps) {
                       key={provider}
                       className="flex items-center justify-between space-x-2 rounded-md border p-2"
                     >
-                      <div className="grid gap-1">
+                      <div className="grid min-w-0 flex-1 gap-1">
                         <p className="text-sm font-medium capitalize">
                           {provider}
                         </p>
                         <p
                           className={cn(
-                            "text-xs",
+                            "truncate text-xs",
                             showKeys[provider]
                               ? "text-foreground"
                               : "text-muted-foreground",
@@ -148,7 +147,7 @@ export function ApiKeysDialog({ trigger }: ApiKeysDialogProps) {
                             : "••••••••••••••••••••••••••"}
                         </p>
                       </div>
-                      <div className="flex space-x-1">
+                      <div className="flex shrink-0 space-x-1">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -178,7 +177,6 @@ export function ApiKeysDialog({ trigger }: ApiKeysDialogProps) {
             )}
           </div>
 
-          {/* Add New API Key Form */}
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Add New API Key</h4>
             <Form {...form}>
@@ -221,6 +219,7 @@ export function ApiKeysDialog({ trigger }: ApiKeysDialogProps) {
                         <Input
                           placeholder="Enter your API key"
                           type="password"
+                          className="truncate"
                           {...field}
                         />
                       </FormControl>

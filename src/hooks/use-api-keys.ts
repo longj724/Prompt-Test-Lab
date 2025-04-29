@@ -14,14 +14,13 @@ const apiKeySchema = z.object({
 export type ApiKey = z.infer<typeof apiKeySchema>;
 
 const apiKeysResponseSchema = z.object({
-  key: apiKeySchema,
+  keys: apiKeySchema,
 });
 
 export type ApiKeysResponse = z.infer<typeof apiKeysResponseSchema>;
 
 const apiKeyUpdateResponseSchema = z.object({
   success: z.boolean(),
-  key: apiKeySchema,
 });
 
 export function useApiKeys() {

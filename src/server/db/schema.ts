@@ -113,7 +113,8 @@ export const apiKeys = pgTable("api_keys", {
   encryptedGoogleKey: text("encrypted_google_key"),
   userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" })
+    .unique(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
 

@@ -199,37 +199,37 @@ export default function NewTestPage() {
                             <SelectLabel>OpenAI</SelectLabel>
                             <SelectItem
                               value="gpt-4.1-nano-2025-04-14"
-                              disabled={!apiKeys?.key.encryptedOpenAIKey}
+                              disabled={!apiKeys?.keys.encryptedOpenAIKey}
                             >
                               GPT-4.1-nano
                             </SelectItem>
                             <SelectItem
                               value="gpt-4o-mini-2024-07-18"
-                              disabled={!apiKeys?.key.encryptedOpenAIKey}
+                              disabled={!apiKeys?.keys.encryptedOpenAIKey}
                             >
                               GPT-4o-mini
                             </SelectItem>
                             <SelectItem
                               value="gpt-4o-2024-08-06"
-                              disabled={!apiKeys?.key.encryptedOpenAIKey}
+                              disabled={!apiKeys?.keys.encryptedOpenAIKey}
                             >
                               GPT-4o
                             </SelectItem>
                             <SelectItem
                               value="gpt-4.1-2025-04-14"
-                              disabled={!apiKeys?.key.encryptedOpenAIKey}
+                              disabled={!apiKeys?.keys.encryptedOpenAIKey}
                             >
                               GPT-4.1
                             </SelectItem>
                             <SelectItem
                               value="o3-2025-04-16"
-                              disabled={!apiKeys?.key.encryptedOpenAIKey}
+                              disabled={!apiKeys?.keys.encryptedOpenAIKey}
                             >
                               o3
                             </SelectItem>
                             <SelectItem
                               value="o4-mini-2025-04-16"
-                              disabled={!apiKeys?.key.encryptedOpenAIKey}
+                              disabled={!apiKeys?.keys.encryptedOpenAIKey}
                             >
                               o4-mini
                             </SelectItem>
@@ -238,25 +238,25 @@ export default function NewTestPage() {
                             <SelectLabel>Anthropic</SelectLabel>
                             <SelectItem
                               value="claude-3-7-sonnet-latest"
-                              disabled={!apiKeys?.key.encryptedAnthropicKey}
+                              disabled={!apiKeys?.keys.encryptedAnthropicKey}
                             >
                               Claude 3.7 Sonnet
                             </SelectItem>
                             <SelectItem
                               value="claude-3-5-sonnet-latest"
-                              disabled={!apiKeys?.key.encryptedAnthropicKey}
+                              disabled={!apiKeys?.keys.encryptedAnthropicKey}
                             >
                               Claude 3.5 Sonnet
                             </SelectItem>
                             <SelectItem
                               value="claude-3-5-haiku-latest"
-                              disabled={!apiKeys?.key.encryptedAnthropicKey}
+                              disabled={!apiKeys?.keys.encryptedAnthropicKey}
                             >
                               Claude 3.5 Haiku
                             </SelectItem>
                             <SelectItem
                               value="claude-3-5-opus-latest"
-                              disabled={!apiKeys?.key.encryptedAnthropicKey}
+                              disabled={!apiKeys?.keys.encryptedAnthropicKey}
                             >
                               Claude 3.5 Opus
                             </SelectItem>
@@ -265,25 +265,25 @@ export default function NewTestPage() {
                             <SelectLabel>Google</SelectLabel>
                             <SelectItem
                               value="gemini-1.5-pro-latest"
-                              disabled={!apiKeys?.key.encryptedGoogleKey}
+                              disabled={!apiKeys?.keys.encryptedGoogleKey}
                             >
                               Gemini 1.5 Pro
                             </SelectItem>
                             <SelectItem
                               value="gemini-1.5-flash-latest"
-                              disabled={!apiKeys?.key.encryptedGoogleKey}
+                              disabled={!apiKeys?.keys.encryptedGoogleKey}
                             >
                               Gemini 1.5 Flash
                             </SelectItem>
                             <SelectItem
                               value="gemini-2.0-flash-latest"
-                              disabled={!apiKeys?.key.encryptedGoogleKey}
+                              disabled={!apiKeys?.keys.encryptedGoogleKey}
                             >
                               Gemini 2.0 Flash
                             </SelectItem>
                             <SelectItem
                               value="gemini-2.0-flash-lite-latest"
-                              disabled={!apiKeys?.key.encryptedGoogleKey}
+                              disabled={!apiKeys?.keys.encryptedGoogleKey}
                             >
                               Gemini 2.0 Flash Lite
                             </SelectItem>
