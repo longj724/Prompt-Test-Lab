@@ -148,14 +148,23 @@ export default async function HomePage() {
         </section>
 
         <section className="container mx-auto py-24">
-          <h2 className="text-center text-3xl font-bold">Pricing</h2>
-          <div className="mt-16 grid grid-cols-3 gap-8">
-            <div className="rounded-xl border p-8">
-              <h3 className="text-xl font-semibold">Basic</h3>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">$0</span>
-                <span className="text-muted-foreground">/month</span>
+          <h2 className="text-center text-3xl font-bold">Simple Pricing</h2>
+          <p className="text-muted-foreground mt-4 text-center">
+            Access all features by bringing your own API key
+          </p>
+          <div className="mt-16 flex justify-center">
+            <div className="w-[400px] rounded-xl border border-blue-500 bg-blue-50 p-8">
+              <div className="flex items-center gap-3">
+                <h3 className="text-xl font-semibold">
+                  Bring Your Own API Key
+                </h3>
+                <div className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700">
+                  Free
+                </div>
               </div>
+              <p className="text-muted-foreground mt-4">
+                Get access to all features by using your own API keys from:
+              </p>
               <ul className="mt-8 space-y-4">
                 <li className="flex items-center gap-2">
                   <svg
@@ -171,7 +180,7 @@ export default async function HomePage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  100 tests/month
+                  OpenAI API Key
                 </li>
                 <li className="flex items-center gap-2">
                   <svg
@@ -187,7 +196,7 @@ export default async function HomePage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  Basic analytics
+                  Anthropic API Key
                 </li>
                 <li className="flex items-center gap-2">
                   <svg
@@ -203,33 +212,7 @@ export default async function HomePage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  Single AI model
-                </li>
-              </ul>
-              <Button className="mt-8 w-full cursor-pointer">Start Free</Button>
-            </div>
-            <div className="rounded-xl border border-blue-500 bg-blue-50 p-8">
-              <h3 className="text-xl font-semibold">Pro</h3>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">$49</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-              <ul className="mt-8 space-y-4">
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Unlimited tests
+                  Google AI API Key
                 </li>
                 <li className="flex items-center gap-2">
                   <svg
@@ -245,103 +228,15 @@ export default async function HomePage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  Advanced analytics
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Multiple AI models
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  API access
+                  Unlimited tests and comparisons
                 </li>
               </ul>
               <Button className="mt-8 w-full cursor-pointer">
-                Get Started
+                Get Started Free
               </Button>
-            </div>
-            <div className="rounded-xl border p-8">
-              <h3 className="text-xl font-semibold">Enterprise</h3>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">Custom</span>
-              </div>
-              <ul className="mt-8 space-y-4">
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Custom solutions
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Dedicated support
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  SLA guarantee
-                </li>
-              </ul>
-              <Button variant="outline" className="mt-8 w-full cursor-pointer">
-                Contact Sales
-              </Button>
+              <p className="text-muted-foreground mt-4 text-center text-sm">
+                No credit card required. Just bring your API keys.
+              </p>
             </div>
           </div>
         </section>
