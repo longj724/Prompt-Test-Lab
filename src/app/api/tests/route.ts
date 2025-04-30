@@ -10,10 +10,11 @@ import { requireAuth } from "@/lib/requireAuth";
 import { generateAIResponse } from "@/lib/generateAIResponse";
 
 const createTestSchema = z.object({
+  messages: z.array(messageSchema),
+  model: z.string(),
   name: z.string().min(1),
   systemPrompt: z.string().min(1),
-  model: z.string(),
-  messages: z.array(messageSchema),
+  temperature: z.number().min(0).max(1),
 });
 
 export async function GET() {
@@ -59,10 +60,11 @@ export async function POST(request: Request) {
     const body = (await request.json()) as z.infer<typeof createTestSchema>;
 
     const {
+      messages: testMessages,
+      model,
       name,
       systemPrompt,
-      model,
-      messages: testMessages,
+      temperature,
     } = createTestSchema.parse(body);
 
     const [test] = await db
@@ -85,6 +87,7 @@ export async function POST(request: Request) {
       .values({
         testId: test.id,
         model,
+        temperature: temperature.toString(),
       })
       .returning();
 
@@ -112,7 +115,7 @@ export async function POST(request: Request) {
         message: message.content,
         systemPrompt,
         userId: session.user.id,
-        temperature: 0.7,
+        temperature,
       });
 
       return db.insert(responses).values({

@@ -37,6 +37,7 @@ export const testResultSchema = z.object({
       id: z.string(),
       model: z.string(),
       createdAt: z.string(),
+      temperature: z.string().min(0).max(1),
       messages: z.array(
         z.object({
           id: z.string(),

@@ -42,6 +42,7 @@ export async function GET(
       modelTests: test.modelTests.map((modelTest) => ({
         id: modelTest.id,
         model: modelTest.model,
+        temperature: modelTest.temperature,
         messages: modelTest.messages.map((message) => ({
           id: message.id,
           content: message.content,

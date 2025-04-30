@@ -129,6 +129,8 @@ const TestResultsPage = () => {
     }
   };
 
+  console.log("test is", test);
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -228,6 +230,9 @@ const TestResultsPage = () => {
                 ? "message"
                 : "messages"}{" "}
               tested
+            </span>
+            <span className="text-muted-foreground text-sm">
+              | Temperature: {selectedModelTest?.temperature}
             </span>
           </div>
           {/* <div className="text-muted-foreground flex items-center gap-2 text-sm">

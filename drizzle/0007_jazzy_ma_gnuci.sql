@@ -1,0 +1,1 @@
+ALTER TABLE "model_tests" ADD COLUMN "temperature" numeric(3, 2) DEFAULT '0.70' NOT NULL;

@@ -1,4 +1,4 @@
-import { integer, pgEnum } from "drizzle-orm/pg-core";
+import { integer, numeric, pgEnum } from "drizzle-orm/pg-core";
 import {
   pgTable,
   text,
@@ -75,6 +75,9 @@ export const modelTests = pgTable("model_tests", {
     .notNull()
     .references(() => tests.id, { onDelete: "cascade" }),
   model: text("model").notNull(),
+  temperature: numeric("temperature", { precision: 3, scale: 2 })
+    .notNull()
+    .default("0.70"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });

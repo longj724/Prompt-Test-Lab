@@ -48,6 +48,7 @@ const promptSchema = z.object({
   name: z.string().min(1, "Name is required"),
   systemPrompt: z.string().min(1, "System prompt is required"),
   model: z.string(),
+  temperature: z.coerce.number().min(0).max(1),
 });
 
 const messagesFormSchema = generateMessagesSchema.pick({ count: true });
@@ -73,6 +74,7 @@ export default function NewTestPage() {
       name: initialName,
       systemPrompt: systemPromptParam ?? "",
       model: "gpt-4o-mini-2024-07-18",
+      temperature: 0.7,
     },
   });
 
@@ -294,6 +296,24 @@ export default function NewTestPage() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={promptForm.control}
+                  name="temperature"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temperature</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          max="1"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </form>
             </Form>
           </div>
@@ -333,6 +353,7 @@ export default function NewTestPage() {
                         name: formData.name,
                         systemPrompt: formData.systemPrompt,
                         model: formData.model,
+                        temperature: formData.temperature,
                         messages: messages,
                       }),
                     });
