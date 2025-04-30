@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface AddMessageVariables {
   modelTestId: string;
   content: string;
+  testId: string;
 }
 
 export function useAddMessage() {
@@ -27,7 +28,7 @@ export function useAddMessage() {
     },
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({
-        queryKey: ["test-result", variables.modelTestId],
+        queryKey: ["test-result", variables.testId],
       });
     },
   });

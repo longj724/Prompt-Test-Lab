@@ -61,7 +61,7 @@ export async function POST(
       temperature: 0.7,
     });
 
-    db.insert(responses).values({
+    await db.insert(responses).values({
       messageId: message.id,
       model: modelTest.model,
       content: text ?? "",

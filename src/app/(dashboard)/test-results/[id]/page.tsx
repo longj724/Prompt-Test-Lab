@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { NewModelTestDialog } from "@/components/new-model-test-dialog";
 import { modelApiNameToDisplayName } from "@/lib/utils";
-import { useAddMessage } from "@/hooks/useAddMessage";
+import { useAddMessage } from "@/hooks/use-add-message";
 
 const TestResultsPage = () => {
   const { id } = useParams();
@@ -119,6 +119,7 @@ const TestResultsPage = () => {
       await addMessage.mutateAsync({
         modelTestId: selectedModelTestId,
         content: newMessage.trim(),
+        testId: test.id,
       });
       setNewMessage("");
       setIsAddingMessage(false);
