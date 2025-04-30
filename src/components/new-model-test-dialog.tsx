@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { useApiKeys } from "@/hooks/use-api-keys";
 interface NewModelTestDialogProps {
   testId: string;
   children: React.ReactNode;
@@ -43,6 +43,7 @@ export function NewModelTestDialog({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>("");
   const queryClient = useQueryClient();
+  const { data: apiKeys } = useApiKeys();
 
   const createModelTest = useMutation({
     mutationFn: async (model: string): Promise<ModelTestResponse> => {
@@ -102,30 +103,90 @@ export function NewModelTestDialog({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>OpenAI</SelectLabel>
-                <SelectItem value="gpt-4.1-nano-2025-04-14">
+                <SelectItem
+                  value="gpt-4.1-nano-2025-04-14"
+                  disabled={!apiKeys?.keys.encryptedOpenAIKey}
+                >
                   GPT-4.1-nano
                 </SelectItem>
-                <SelectItem value="gpt-4o-mini-2024-07-18">
+                <SelectItem
+                  value="gpt-4o-mini-2024-07-18"
+                  disabled={!apiKeys?.keys.encryptedOpenAIKey}
+                >
                   GPT-4o-mini
                 </SelectItem>
-                <SelectItem value="gpt-4o-2024-08-06">GPT-4o</SelectItem>
-                <SelectItem value="gpt-4.1-2025-04-14">GPT-4.1</SelectItem>
-                <SelectItem value="o3-2025-04-16">o3</SelectItem>
+                <SelectItem
+                  value="gpt-4o-2024-08-06"
+                  disabled={!apiKeys?.keys.encryptedOpenAIKey}
+                >
+                  GPT-4o
+                </SelectItem>
+                <SelectItem
+                  value="gpt-4.1-2025-04-14"
+                  disabled={!apiKeys?.keys.encryptedOpenAIKey}
+                >
+                  GPT-4.1
+                </SelectItem>
+                <SelectItem
+                  value="o3-2025-04-16"
+                  disabled={!apiKeys?.keys.encryptedOpenAIKey}
+                >
+                  o3
+                </SelectItem>
                 <SelectItem value="o4-mini-2025-04-16">o4-mini</SelectItem>
               </SelectGroup>
               <SelectGroup>
                 <SelectLabel>Anthropic</SelectLabel>
-                <SelectItem value="claude-3-opus-latest">
+                <SelectItem
+                  value="claude-3-opus-latest"
+                  disabled={!apiKeys?.keys.encryptedAnthropicKey}
+                >
                   Claude 3 Opus
                 </SelectItem>
-                <SelectItem value="claude-3-7-sonnet-latest">
+                <SelectItem
+                  value="claude-3-7-sonnet-latest"
+                  disabled={!apiKeys?.keys.encryptedAnthropicKey}
+                >
                   Claude 3.7 Sonnet
                 </SelectItem>
-                <SelectItem value="claude-3-5-sonnet-latest">
+                <SelectItem
+                  value="claude-3-5-sonnet-latest"
+                  disabled={!apiKeys?.keys.encryptedAnthropicKey}
+                >
                   Claude 3.5 Sonnet
                 </SelectItem>
-                <SelectItem value="claude-3-5-haiku-latest">
+                <SelectItem
+                  value="claude-3-5-haiku-latest"
+                  disabled={!apiKeys?.keys.encryptedAnthropicKey}
+                >
                   Claude 3.5 Haiku
+                </SelectItem>
+              </SelectGroup>
+              <SelectGroup>
+                <SelectLabel>Google</SelectLabel>
+                <SelectItem
+                  value="gemini-1.5-pro-latest"
+                  disabled={!apiKeys?.keys.encryptedGoogleKey}
+                >
+                  Gemini 1.5 Pro
+                </SelectItem>
+                <SelectItem
+                  value="gemini-1.5-flash-latest"
+                  disabled={!apiKeys?.keys.encryptedGoogleKey}
+                >
+                  Gemini 1.5 Flash
+                </SelectItem>
+                <SelectItem
+                  value="gemini-2.0-flash-latest"
+                  disabled={!apiKeys?.keys.encryptedGoogleKey}
+                >
+                  Gemini 2.0 Flash
+                </SelectItem>
+                <SelectItem
+                  value="gemini-2.0-flash-lite-latest"
+                  disabled={!apiKeys?.keys.encryptedGoogleKey}
+                >
+                  Gemini 2.0 Flash Lite
                 </SelectItem>
               </SelectGroup>
             </SelectContent>
