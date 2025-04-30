@@ -1,18 +1,13 @@
 // External Dependencies
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { anthropic } from "@ai-sdk/anthropic";
-import { google } from "@ai-sdk/google";
-import { type LanguageModelV1 } from "@ai-sdk/provider";
 
 // Internal Dependencies
 import { db } from "@/server/db";
 import { messages, modelTests, responses, tests } from "@/server/db/schema";
 import { messageSchema } from "@/lib/client-schemas";
-import { modelToProviderMap } from "@/lib/utils";
 import { requireAuth } from "@/lib/requireAuth";
+import { generateAIResponse } from "@/lib/generateAIResponse";
 
 const createTestSchema = z.object({
   name: z.string().min(1),
@@ -59,7 +54,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    await requireAuth();
+    const session = await requireAuth();
 
     const body = (await request.json()) as z.infer<typeof createTestSchema>;
 
@@ -111,33 +106,19 @@ export async function POST(request: Request) {
       )
       .returning();
 
-    const provider =
-      modelToProviderMap[model as keyof typeof modelToProviderMap];
-
-    let modelProvider: LanguageModelV1;
-    switch (provider) {
-      case "openai":
-        modelProvider = openai(model);
-        break;
-      case "anthropic":
-        modelProvider = anthropic(model);
-        break;
-      case "google":
-        modelProvider = google(model);
-        break;
-    }
-
     const responsePromises = createdMessages.map(async (message) => {
-      const { text } = await generateText({
-        model: modelProvider,
-        prompt: message.content,
-        system: systemPrompt,
+      const text = await generateAIResponse({
+        model,
+        message: message.content,
+        systemPrompt,
+        userId: session.user.id,
+        temperature: 0.7,
       });
 
       return db.insert(responses).values({
         messageId: message.id,
         model,
-        content: text,
+        content: text ?? "",
       });
     });
 

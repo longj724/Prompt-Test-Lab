@@ -2,17 +2,12 @@
 import { z } from "zod";
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { openai } from "@ai-sdk/openai";
-import { generateText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
-import { type LanguageModelV1 } from "@ai-sdk/provider";
-import { google } from "@ai-sdk/google";
 
 // Internal Dependencies
-import { modelToProviderMap } from "@/lib/utils";
 import { db } from "@/server/db";
 import { modelTests, messages, responses } from "@/server/db/schema";
 import { requireAuth } from "@/lib/requireAuth";
+import { generateAIResponse } from "@/lib/generateAIResponse";
 
 const messageSchema = z.object({
   content: z.string().min(1),
@@ -23,7 +18,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireAuth();
+    const session = await requireAuth();
 
     const { id } = await params;
     const body = (await request.json()) as z.infer<typeof messageSchema>;
@@ -58,32 +53,18 @@ export async function POST(
       );
     }
 
-    const provider =
-      modelToProviderMap[modelTest.model as keyof typeof modelToProviderMap];
-
-    let modelProvider: LanguageModelV1;
-    switch (provider) {
-      case "openai":
-        modelProvider = openai(modelTest.model);
-        break;
-      case "anthropic":
-        modelProvider = anthropic(modelTest.model);
-        break;
-      case "google":
-        modelProvider = google(modelTest.model);
-        break;
-    }
-
-    const { text } = await generateText({
-      model: modelProvider,
-      prompt: message.content,
-      system: modelTest.test.systemPrompt,
+    const text = await generateAIResponse({
+      model: modelTest.model,
+      message: message.content,
+      systemPrompt: modelTest.test.systemPrompt,
+      userId: session.user.id,
+      temperature: 0.7,
     });
 
     db.insert(responses).values({
       messageId: message.id,
       model: modelTest.model,
-      content: text,
+      content: text ?? "",
     });
 
     return NextResponse.json({ message, response: text });

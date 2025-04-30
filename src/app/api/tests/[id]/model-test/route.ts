@@ -1,18 +1,13 @@
 // External Dependencies
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { anthropic } from "@ai-sdk/anthropic";
 import { eq } from "drizzle-orm";
-import { generateText } from "ai";
-import { type LanguageModelV1 } from "@ai-sdk/provider";
-import { google } from "@ai-sdk/google";
-import { openai } from "@ai-sdk/openai";
 
 // Internal Dependencies
 import { db } from "@/server/db";
 import { modelTests, messages, responses, tests } from "@/server/db/schema";
-import { modelToProviderMap } from "@/lib/utils";
 import { requireAuth } from "@/lib/requireAuth";
+import { generateAIResponse } from "@/lib/generateAIResponse";
 
 const createModelTestSchema = z.object({
   model: z.string(),
@@ -23,7 +18,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireAuth();
+    const session = await requireAuth();
 
     const { id } = await params;
     const body = (await request.json()) as unknown;
@@ -73,33 +68,19 @@ export async function POST(
       )
       .returning();
 
-    const provider =
-      modelToProviderMap[model as keyof typeof modelToProviderMap];
-
-    let modelProvider: LanguageModelV1;
-    switch (provider) {
-      case "openai":
-        modelProvider = openai(model);
-        break;
-      case "anthropic":
-        modelProvider = anthropic(model);
-        break;
-      case "google":
-        modelProvider = google(model);
-        break;
-    }
-
     const responsePromises = createdMessages.map(async (message) => {
-      const { text } = await generateText({
-        model: modelProvider,
-        prompt: message.content,
-        system: test.systemPrompt,
+      const content = await generateAIResponse({
+        model,
+        message: message.content,
+        systemPrompt: test.systemPrompt,
+        userId: session.user.id,
+        temperature: 0.7,
       });
 
       return db.insert(responses).values({
         messageId: message.id,
         model,
-        content: text,
+        content: content ?? "",
       });
     });
 
