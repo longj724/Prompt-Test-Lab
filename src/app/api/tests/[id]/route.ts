@@ -67,3 +67,24 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    await requireAuth();
+
+    const { id } = await params;
+
+    await db.delete(tests).where(eq(tests.id, id));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting test:", error);
+    return NextResponse.json(
+      { error: "Failed to delete test" },
+      { status: 500 },
+    );
+  }
+}

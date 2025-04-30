@@ -1,5 +1,5 @@
 // External Dependencies
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 const testSchema = z.object({
@@ -22,6 +22,25 @@ export function useTests() {
       }
       const data: unknown = await response.json();
       return z.array(testSchema).parse(data);
+    },
+  });
+}
+
+export function useDeleteTest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (testId: string) => {
+      const response = await fetch(`/api/tests/${testId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete test");
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["tests"] });
     },
   });
 }
