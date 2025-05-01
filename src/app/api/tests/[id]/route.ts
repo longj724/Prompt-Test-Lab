@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 // Internal Dependencies
 import { db } from "@/server/db";
 import { tests } from "@/server/db/schema";
-import { requireAuth } from "@/lib/requireAuth";
+import { requireAuth } from "@/lib/require-auth";
 
 export async function GET(
   request: Request,

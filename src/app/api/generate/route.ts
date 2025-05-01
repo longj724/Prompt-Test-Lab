@@ -8,7 +8,7 @@ import {
   generateMessagesSchema,
   generateApiResponseSchema,
 } from "@/lib/client-schemas";
-import { requireAuth } from "@/lib/requireAuth";
+import { requireAuth } from "@/lib/require-auth";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,

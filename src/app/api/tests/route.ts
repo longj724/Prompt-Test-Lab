@@ -6,8 +6,8 @@ import { z } from "zod";
 import { db } from "@/server/db";
 import { messages, modelTests, responses, tests } from "@/server/db/schema";
 import { messageSchema } from "@/lib/client-schemas";
-import { requireAuth } from "@/lib/requireAuth";
-import { generateAIResponse } from "@/lib/generateAIResponse";
+import { requireAuth } from "@/lib/require-auth";
+import { generateAIResponse } from "@/lib/generate-ai-response";
 
 const createTestSchema = z.object({
   messages: z.array(messageSchema),

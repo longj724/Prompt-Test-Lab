@@ -6,8 +6,8 @@ import { eq } from "drizzle-orm";
 // Internal Dependencies
 import { db } from "@/server/db";
 import { modelTests, messages, responses } from "@/server/db/schema";
-import { requireAuth } from "@/lib/requireAuth";
-import { generateAIResponse } from "@/lib/generateAIResponse";
+import { requireAuth } from "@/lib/require-auth";
+import { generateAIResponse } from "@/lib/generate-ai-response";
 
 const messageSchema = z.object({
   content: z.string().min(1),

@@ -31,7 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { type Message, generateMessagesSchema } from "@/lib/client-schemas";
-import { useGenerateMessages } from "@/hooks/useGenerateMessages";
+import { useGenerateMessages } from "@/hooks/use-generate-messages";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,

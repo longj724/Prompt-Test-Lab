@@ -4,7 +4,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 
 // Internal Dependencies
-import { requireAuth } from "@/lib/requireAuth";
+import { requireAuth } from "@/lib/require-auth";
 import { db } from "@/server/db";
 import { responses, ratingEnumValues } from "@/server/db/schema";
 

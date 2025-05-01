@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
 import { apiKeys } from "@/server/db/schema";
 import { encrypt } from "@/lib/encryption";
-import { requireAuth } from "@/lib/requireAuth";
+import { requireAuth } from "@/lib/require-auth";
 
 const saveKeySchema = z.object({
   provider: z.enum(["google", "anthropic", "openai"]),

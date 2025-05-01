@@ -24,7 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { useTestResult } from "@/hooks/useTestResult";
+import { useTestResult } from "@/hooks/use-test-results";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -186,8 +186,6 @@ const TestResultsPage = () => {
     }
   };
 
-  console.log("selectedResponse", selectedResponse);
-
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -292,14 +290,6 @@ const TestResultsPage = () => {
               | Temperature: {selectedModelTest?.temperature}
             </span>
           </div>
-          {/* <div className="text-muted-foreground flex items-center gap-2 text-sm">
-            <span>Test run:</span>
-            <time>
-              {selectedModelTest?.createdAt
-                ? formatDate(selectedModelTest.createdAt)
-                : "-"}
-            </time>
-          </div> */}
         </div>
 
         <div className="grid grid-cols-[350px_1fr]">

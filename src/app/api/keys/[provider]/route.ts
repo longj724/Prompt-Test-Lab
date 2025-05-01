@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 // Internal Dependencies
-import { requireAuth } from "@/lib/requireAuth";
+import { requireAuth } from "@/lib/require-auth";
 import { db } from "@/server/db";
 import { apiKeys } from "@/server/db/schema";
 
