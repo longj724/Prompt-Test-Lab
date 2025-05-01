@@ -1,7 +1,7 @@
 "use client";
 
 // External Dependencies
-import { Plus, Copy, Search } from "lucide-react";
+import { Plus, Copy, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { NewModelTestDialog } from "@/components/new-model-test-dialog";
 import { modelApiNameToDisplayName } from "@/lib/utils";
 import { useAddMessage } from "@/hooks/use-add-message";
+import { useDeleteMessage } from "@/hooks/use-delete-message";
 
 const TestResultsPage = () => {
   const { id } = useParams();
@@ -41,6 +42,7 @@ const TestResultsPage = () => {
   const [isAddingMessage, setIsAddingMessage] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const addMessage = useAddMessage();
+  const deleteMessage = useDeleteMessage();
 
   if (isLoading) {
     return (
@@ -129,7 +131,17 @@ const TestResultsPage = () => {
     }
   };
 
-  console.log("test is", test);
+  const handleDeleteMessage = async (messageId: string) => {
+    try {
+      await deleteMessage.mutateAsync(messageId);
+      toast.success("Message deleted successfully");
+      if (selectedMessageId === messageId) {
+        setSelectedMessageId(null);
+      }
+    } catch (error) {
+      toast.error("Failed to delete message");
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -299,7 +311,21 @@ const TestResultsPage = () => {
                       <span className="text-sm">U</span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm">{selectedMessage.content}</p>
+                      <div className="flex items-start justify-between">
+                        <p className="text-sm">{selectedMessage.content}</p>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="cursor-pointer hover:bg-red-500"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void handleDeleteMessage(selectedMessage.id);
+                          }}
+                          disabled={deleteMessage.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                       <time className="text-muted-foreground mt-1 block text-xs">
                         {formatDate(selectedMessage.createdAt)}
                       </time>
