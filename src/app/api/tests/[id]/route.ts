@@ -54,6 +54,7 @@ export async function GET(
             content: response.content,
             timestamp: response.createdAt,
             notes: response.notes,
+            rating: response.rating,
           })),
         })),
       })),

@@ -186,6 +186,8 @@ const TestResultsPage = () => {
     }
   };
 
+  console.log("selectedResponse", selectedResponse);
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -414,58 +416,66 @@ const TestResultsPage = () => {
                             </p>
                           </div>
                           <div className="mt-4 space-y-4">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant={
-                                  selectedResponse.rating === "good"
-                                    ? "default"
-                                    : "outline"
-                                }
-                                size="sm"
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  void updateResponse.mutate({
-                                    responseId: selectedResponse.id,
-                                    rating: "bad",
-                                  });
-                                }}
-                              >
-                                <ThumbsDown className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant={
-                                  selectedResponse.rating === "mild"
-                                    ? "default"
-                                    : "outline"
-                                }
-                                size="sm"
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  void updateResponse.mutate({
-                                    responseId: selectedResponse.id,
-                                    rating: "mild",
-                                  });
-                                }}
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant={
-                                  selectedResponse.rating === "bad"
-                                    ? "default"
-                                    : "outline"
-                                }
-                                size="sm"
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  void updateResponse.mutate({
-                                    responseId: selectedResponse.id,
-                                    rating: "good",
-                                  });
-                                }}
-                              >
-                                <ThumbsUp className="h-4 w-4" />
-                              </Button>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">
+                                Rating
+                              </label>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant={
+                                    selectedResponse.rating === "bad"
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                  size="sm"
+                                  className="cursor-pointer gap-2"
+                                  onClick={() => {
+                                    void updateResponse.mutate({
+                                      responseId: selectedResponse.id,
+                                      rating: "bad",
+                                    });
+                                  }}
+                                >
+                                  <ThumbsDown className="h-4 w-4" />
+                                  Bad
+                                </Button>
+                                <Button
+                                  variant={
+                                    selectedResponse.rating === "mild"
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                  size="sm"
+                                  className="cursor-pointer gap-2"
+                                  onClick={() => {
+                                    void updateResponse.mutate({
+                                      responseId: selectedResponse.id,
+                                      rating: "mild",
+                                    });
+                                  }}
+                                >
+                                  <Minus className="h-4 w-4" />
+                                  Mild
+                                </Button>
+                                <Button
+                                  variant={
+                                    selectedResponse.rating === "good"
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                  size="sm"
+                                  className="cursor-pointer gap-2"
+                                  onClick={() => {
+                                    void updateResponse.mutate({
+                                      responseId: selectedResponse.id,
+                                      rating: "good",
+                                    });
+                                  }}
+                                >
+                                  <ThumbsUp className="h-4 w-4" />
+                                  Good
+                                </Button>
+                              </div>
                             </div>
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
