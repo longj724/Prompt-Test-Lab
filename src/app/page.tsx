@@ -40,38 +40,38 @@ export default async function HomePage() {
         <section className="container mx-auto grid min-h-[600px] grid-cols-2 items-center gap-8 py-16">
           <div className="space-y-8">
             <h1 className="text-5xl leading-tight font-bold tracking-tighter">
-              Test & Optimize Your AI Prompts
+              Test & Optimize Your System Prompts
             </h1>
             <p className="text-muted-foreground text-xl">
-              Streamline your prompt engineering workflow with automated
-              testing, evaluation, and optimization tools designed for AI
-              systems.
+              Use AI to generate responses and test them across multiple models
+              to analyze how your system prompts performs.
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="cursor-pointer">
-                Get Started
-              </Button>
-              <Button
+              <Link href="/sign-up">
+                <Button size="lg" className="cursor-pointer">
+                  Get Started
+                </Button>
+              </Link>
+              {/* <Button
                 size="lg"
                 variant="outline"
                 className="cursor-pointer hover:bg-gray-300 hover:text-black"
               >
                 Watch Demo
-              </Button>
+              </Button> */}
             </div>
           </div>
-          <div className="relative aspect-[16/10] rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 p-8">
-            <Image
-              src="/dashboard.png"
-              alt="PromptTestLab Dashboard"
-              fill
-              className="object-contain p-4"
+          <div className="relative aspect-[18/10] rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 p-4">
+            <img
+              src="/demo-screenshot.png"
+              alt="Prompt Test Lab Dashboard"
+              className="object-contain p-2"
             />
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="container mx-auto py-24">
+        <section className="container mx-auto py-20">
           <div className="text-center">
             <h2 className="text-3xl font-bold">
               Powerful Features for Prompt Testing
@@ -150,7 +150,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="container mx-auto py-24">
+        <section className="container mx-auto py-20">
           <h2 className="text-center text-3xl font-bold">Simple Pricing</h2>
           <p className="text-muted-foreground mt-4 text-center">
             Access all features by bringing your own API key
@@ -235,7 +235,7 @@ export default async function HomePage() {
                 </li>
               </ul>
               <Button className="mt-8 w-full cursor-pointer">
-                Get Started
+                <Link href="/sign-up">Get Started</Link>
               </Button>
               <p className="text-muted-foreground mt-4 text-center text-sm">
                 No credit card required. Just bring your API keys.
@@ -245,7 +245,7 @@ export default async function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-[#6366f1] py-24">
+        <section className="bg-[#6366f1] py-20">
           <div className="container mx-auto text-center text-white">
             <h2 className="text-3xl font-bold">
               Ready to Optimize Your AI Prompts?
@@ -256,7 +256,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Button size="lg" variant="secondary" className="cursor-pointer">
-                Start
+                <Link href="/sign-up">Start</Link>
               </Button>
             </div>
           </div>
