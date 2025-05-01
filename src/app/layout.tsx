@@ -8,7 +8,7 @@ import Providers from "@/components/providers";
 export const metadata: Metadata = {
   title: "Prompt Test Lab",
   description: "A tool for testing and comparing prompts",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/prompt-test-lab-icon.svg" }],
 };
 
 const geist = Geist({

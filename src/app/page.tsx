@@ -1,7 +1,8 @@
 // External Dependencies
 import Link from "next/link";
 import Image from "next/image";
-// Relative Dependencies
+
+// InternalDependencies
 import { Button } from "@/components/ui/button";
 
 export default async function HomePage() {
@@ -19,12 +20,10 @@ export default async function HomePage() {
             <span className="text-xl font-bold">Prompt Test Lab</span>
           </div>
           <div className="flex items-center gap-4">
-            {/* <Link href="/features">Features</Link> */}
-            {/* <Link href="/pricing">Pricing</Link> */}
             <Link href="/sign-in">
               <Button
                 variant="outline"
-                className="hover:cursor-pointer hover:bg-white hover:text-black"
+                className="hover:cursor-pointer hover:bg-gray-300 hover:text-black"
               >
                 Login
               </Button>
@@ -50,9 +49,13 @@ export default async function HomePage() {
             </p>
             <div className="flex gap-4">
               <Button size="lg" className="cursor-pointer">
-                Get Started Free
+                Get Started
               </Button>
-              <Button size="lg" variant="outline" className="cursor-pointer">
+              <Button
+                size="lg"
+                variant="outline"
+                className="cursor-pointer hover:bg-gray-300 hover:text-black"
+              >
                 Watch Demo
               </Button>
             </div>
@@ -232,7 +235,7 @@ export default async function HomePage() {
                 </li>
               </ul>
               <Button className="mt-8 w-full cursor-pointer">
-                Get Started Free
+                Get Started
               </Button>
               <p className="text-muted-foreground mt-4 text-center text-sm">
                 No credit card required. Just bring your API keys.
@@ -253,7 +256,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Button size="lg" variant="secondary" className="cursor-pointer">
-                Start For Free
+                Start
               </Button>
             </div>
           </div>

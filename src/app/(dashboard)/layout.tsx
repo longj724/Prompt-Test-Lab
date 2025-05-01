@@ -38,7 +38,12 @@ export default async function DashboardLayout({
     <SidebarProvider defaultOpen>
       <div className="flex h-screen w-full">
         <Sidebar collapsible="icon">
-          <SidebarHeader className="flex items-center gap-2">
+          <SidebarHeader className="mt-2 flex flex-row items-center justify-center gap-2">
+            <img
+              src="/prompt-test-lab-icon.svg"
+              alt="Prompt Test Lab Logo"
+              className="h-6 w-6"
+            />
             <span className="font-semibold">Prompt Test Lab</span>
           </SidebarHeader>
           <SidebarContent>
