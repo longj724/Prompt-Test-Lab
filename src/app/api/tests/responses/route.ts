@@ -6,11 +6,11 @@ import { eq } from "drizzle-orm";
 // Internal Dependencies
 import { requireAuth } from "@/lib/requireAuth";
 import { db } from "@/server/db";
-import { responses } from "@/server/db/schema";
+import { responses, ratingEnumValues } from "@/server/db/schema";
 
 const updateResponseSchema = z.object({
   responseId: z.string(),
-  rating: z.number().min(1).max(5).optional(),
+  rating: z.enum(ratingEnumValues).optional(),
   notes: z.string().optional(),
 });
 

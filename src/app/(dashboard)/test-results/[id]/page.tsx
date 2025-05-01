@@ -1,10 +1,21 @@
 "use client";
 
 // External Dependencies
-import { Plus, Copy, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+import {
+  Plus,
+  Copy,
+  Search,
+  Trash2,
+  ThumbsUp,
+  ThumbsDown,
+  Minus,
+  Save,
+} from "lucide-react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+
+// Internal Dependencies
 import {
   Dialog,
   DialogContent,
@@ -13,8 +24,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-
-// Internal Dependencies
 import { useTestResult } from "@/hooks/useTestResult";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +36,7 @@ import { NewModelTestDialog } from "@/components/new-model-test-dialog";
 import { modelApiNameToDisplayName } from "@/lib/utils";
 import { useAddMessage } from "@/hooks/use-add-message";
 import { useDeleteMessage } from "@/hooks/use-delete-message";
+import { useUpdateResponse } from "@/hooks/use-update-response";
 
 const TestResultsPage = () => {
   const { id } = useParams();
@@ -38,11 +48,49 @@ const TestResultsPage = () => {
     null,
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [notes, setNotes] = useState("");
+  const [isNotesModified, setIsNotesModified] = useState(false);
   const router = useRouter();
   const [isAddingMessage, setIsAddingMessage] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const addMessage = useAddMessage();
   const deleteMessage = useDeleteMessage();
+  const updateResponse = useUpdateResponse();
+
+  useEffect(() => {
+    if (selectedModelTestId && test?.modelTests) {
+      const modelTest = test.modelTests.find(
+        (mt) => mt.id === selectedModelTestId,
+      );
+      if (modelTest && modelTest.messages.length > 0) {
+        setSelectedMessageId(modelTest.messages[0]?.id ?? null);
+      }
+    }
+  }, [selectedModelTestId, test]);
+
+  useEffect(() => {
+    const modelTests = test?.modelTests;
+    if (modelTests && modelTests?.length > 0 && !selectedModelTestId) {
+      setSelectedModelTestId(modelTests?.[0]?.id ?? null);
+    }
+  }, [test, selectedModelTestId]);
+
+  useEffect(() => {
+    const selectedModelTest = test?.modelTests?.find(
+      (mt) => mt.id === selectedModelTestId,
+    );
+    const selectedMessage = selectedModelTest?.messages?.find(
+      (m) => m.id === selectedMessageId,
+    );
+    const selectedResponse = selectedMessage?.responses?.find(
+      (r) => r.model === selectedModelTest?.model,
+    );
+
+    if (selectedResponse) {
+      setNotes(selectedResponse.notes ?? "");
+      setIsNotesModified(false);
+    }
+  }, [test, selectedModelTestId, selectedMessageId]);
 
   if (isLoading) {
     return (
@@ -66,24 +114,9 @@ const TestResultsPage = () => {
     );
   }
 
-  // Set initial selected model test if not set
-  if (!selectedModelTestId && test.modelTests.length > 0) {
-    setSelectedModelTestId(test.modelTests[0]?.id ?? null);
-  }
-
   const selectedModelTest = test.modelTests.find(
     (mt) => mt.id === selectedModelTestId,
   );
-
-  // Set initial selected message if not set
-  if (
-    selectedModelTest &&
-    Array.isArray(selectedModelTest.messages) &&
-    selectedModelTest.messages.length > 0 &&
-    !selectedMessageId
-  ) {
-    setSelectedMessageId(selectedModelTest.messages[0]?.id ?? null);
-  }
 
   const selectedMessage =
     selectedModelTest && Array.isArray(selectedModelTest.messages)
@@ -97,13 +130,23 @@ const TestResultsPage = () => {
         )
       : undefined;
 
+  const handleSaveNotes = () => {
+    if (!selectedResponse) return;
+
+    void updateResponse.mutate({
+      responseId: selectedResponse.id,
+      notes: notes,
+    });
+    setIsNotesModified(false);
+  };
+
   const filteredMessages =
     selectedModelTest?.messages.filter((message) =>
       message.content.toLowerCase().includes(searchQuery.toLowerCase()),
     ) ?? [];
 
-  const formatDate = (timestamp: string) =>
-    new Date(timestamp).toISOString().split("T")[0];
+  const formatDate = (date: string) =>
+    new Date(date).toISOString().split("T")[0];
 
   const handleCopyResponse = async (content: string) => {
     try {
@@ -369,6 +412,92 @@ const TestResultsPage = () => {
                             <p className="whitespace-pre-wrap">
                               {selectedResponse.content}
                             </p>
+                          </div>
+                          <div className="mt-4 space-y-4">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant={
+                                  selectedResponse.rating === "good"
+                                    ? "default"
+                                    : "outline"
+                                }
+                                size="sm"
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  void updateResponse.mutate({
+                                    responseId: selectedResponse.id,
+                                    rating: "bad",
+                                  });
+                                }}
+                              >
+                                <ThumbsDown className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant={
+                                  selectedResponse.rating === "mild"
+                                    ? "default"
+                                    : "outline"
+                                }
+                                size="sm"
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  void updateResponse.mutate({
+                                    responseId: selectedResponse.id,
+                                    rating: "mild",
+                                  });
+                                }}
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant={
+                                  selectedResponse.rating === "bad"
+                                    ? "default"
+                                    : "outline"
+                                }
+                                size="sm"
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  void updateResponse.mutate({
+                                    responseId: selectedResponse.id,
+                                    rating: "good",
+                                  });
+                                }}
+                              >
+                                <ThumbsUp className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <label
+                                  htmlFor="notes"
+                                  className="text-sm font-medium"
+                                >
+                                  Notes
+                                </label>
+                                {isNotesModified && (
+                                  <Button
+                                    size="sm"
+                                    className="cursor-pointer gap-2"
+                                    onClick={handleSaveNotes}
+                                    disabled={updateResponse.isPending}
+                                  >
+                                    <Save className="h-4 w-4" />
+                                    Save Notes
+                                  </Button>
+                                )}
+                              </div>
+                              <Textarea
+                                id="notes"
+                                placeholder="Add notes about this response..."
+                                value={notes}
+                                onChange={(e) => {
+                                  setNotes(e.target.value);
+                                  setIsNotesModified(true);
+                                }}
+                                className="min-h-[100px]"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>

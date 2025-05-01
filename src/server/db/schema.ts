@@ -57,6 +57,10 @@ export const modelEnumValues = [
 export const modelEnum = pgEnum("model", modelEnumValues);
 export type Model = (typeof modelEnumValues)[number];
 
+export const ratingEnumValues = ["good", "mild", "bad"] as const;
+export const ratingEnum = pgEnum("rating", ratingEnumValues);
+export type Rating = (typeof ratingEnumValues)[number];
+
 export const tests = pgTable("tests", {
   id: text("id")
     .primaryKey()
@@ -103,6 +107,7 @@ export const responses = pgTable("responses", {
     .references(() => messages.id, { onDelete: "cascade" }),
   model: text("model").notNull(),
   content: text("content").notNull(),
+  rating: text("rating").$type<Rating>(),
   notes: text("notes"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
