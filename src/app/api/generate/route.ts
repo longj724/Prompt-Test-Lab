@@ -1,5 +1,4 @@
 // External Dependencies
-import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -9,43 +8,35 @@ import {
   generateApiResponseSchema,
 } from "@/lib/client-schemas";
 import { requireAuth } from "@/lib/require-auth";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+import { generateAIResponse } from "@/lib/generate-ai-response";
 
 export async function POST(request: Request) {
   try {
-    await requireAuth();
+    const session = await requireAuth();
 
     const body = (await request.json()) as z.infer<
       typeof generateMessagesSchema
     >;
     const { count, systemPrompt } = generateMessagesSchema.parse(body);
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini-2024-07-18",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: `Generate ${count} different example user messages that might be asked given the system prompt above. Format the response as a JSON object with a 'messages' array where each message has a 'content' property. For example: {"messages": [{"content": "message 1"}, {"content": "message 2"}]}`,
-        },
-      ],
-      response_format: { type: "json_object" },
+    const result = await generateAIResponse({
+      model: body?.model ?? "gpt-4o-mini-2024-07-18",
+      message: `Generate ${count} different example user messages that might be asked given the system prompt above. Format the response as a JSON object with a 'messages' array where each message has a 'content' property. For example: {"messages": [{"content": "message 1"}, {"content": "message 2"}]}`,
+      systemPrompt,
+      userId: session.user.id,
       temperature: 0.7,
+      responseFormat: { type: "json_object" },
     });
-
-    const result = response.choices[0]?.message?.content ?? "";
 
     if (result === "") {
       throw new Error("Unable to generate messages");
     }
 
     try {
+      if (!result) {
+        throw new Error("Unable to generate messages");
+      }
+
       const parsedResult = generateApiResponseSchema.parse(JSON.parse(result));
 
       const messages = parsedResult.messages.map((message) => ({

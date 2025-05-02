@@ -99,6 +99,7 @@ export default function NewTestPage() {
       const generatedMessages = await generateMutation.mutateAsync({
         count: data.count,
         systemPrompt,
+        model: promptForm.getValues("model"),
       });
       setMessages((prev) => [...prev, ...generatedMessages]);
       toast.success(`Generated ${generatedMessages.length} messages`);

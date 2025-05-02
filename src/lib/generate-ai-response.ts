@@ -16,6 +16,7 @@ interface GenerateAIResponseArgs {
   systemPrompt: string;
   userId: string;
   temperature: number;
+  responseFormat?: { type: "json_object" };
 }
 
 export async function generateAIResponse({
@@ -24,6 +25,7 @@ export async function generateAIResponse({
   systemPrompt,
   userId,
   temperature,
+  responseFormat,
 }: GenerateAIResponseArgs) {
   const userApiKeys = await db.query.apiKeys.findFirst({
     where: eq(apiKeys.userId, userId),
@@ -46,6 +48,7 @@ export async function generateAIResponse({
           { role: "user", content: message },
         ],
         temperature,
+        response_format: responseFormat,
       });
 
       if (openAIResponse?.choices[0]?.message?.content) {
