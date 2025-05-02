@@ -30,8 +30,7 @@ async function generateMessages(
     throw new Error(data.error ?? "Failed to generate messages");
   }
 
-  const messages = await response.json();
-  return messages as Message[];
+  return (await response.json()) as Promise<Message[]>;
 }
 
 export function useGenerateMessages() {

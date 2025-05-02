@@ -1,6 +1,5 @@
 // External Dependencies
 import { eq } from "drizzle-orm";
-import { z } from "zod";
 import { NextResponse } from "next/server";
 
 // Internal Dependencies
@@ -9,10 +8,10 @@ import { messages } from "@/server/db/schema";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = z.string().parse(params.id);
+    const { id } = await params;
 
     await db.delete(messages).where(eq(messages.id, id));
 

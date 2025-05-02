@@ -1,6 +1,9 @@
 // External Dependencies
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+// Internal Dependencies
+import { type Message } from "@/lib/client-schemas";
+
 interface AddMessageVariables {
   modelTestId: string;
   content: string;
@@ -24,7 +27,7 @@ export function useAddMessage() {
         throw new Error("Failed to add message");
       }
 
-      return response.json();
+      return (await response.json()) as Promise<Message>;
     },
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({
