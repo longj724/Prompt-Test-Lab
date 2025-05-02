@@ -46,3 +46,4 @@ yarn-error.log*
 .idea
 
 google_client_secret.json
+google_client_secret_prod.json
